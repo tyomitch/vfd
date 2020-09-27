@@ -67,7 +67,7 @@ static BOOL	bRegWritable = FALSE;
 //
 //	window massage dispatcher
 //
-BOOL CALLBACK AssocProc(
+INT_PTR CALLBACK AssocProc(
 	HWND hDlg,
 	UINT msg,
 	WPARAM wParam,

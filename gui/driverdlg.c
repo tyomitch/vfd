@@ -91,7 +91,7 @@ static BOOL ConfirmContinue	(HWND hDlg, UINT msg, PCSTR fallback);
 //	window message dispatcher
 //
 
-BOOL CALLBACK DriverProc(
+INT_PTR CALLBACK DriverProc(
 	HWND hDlg,
 	UINT msg,
 	WPARAM wParam,

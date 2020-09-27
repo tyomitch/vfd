@@ -40,7 +40,7 @@ static void OnRefreshDialog	(HWND hDlg);
 
 //	Drive letter change dialog
 
-static BOOL CALLBACK LetterProc(
+static INT_PTR CALLBACK LetterProc(
 	HWND hDlg,
 	UINT msg,
 	WPARAM wParam,
@@ -53,7 +53,7 @@ static void OnLetterOK		(HWND hDlg);
 //
 //	window message dispatcher
 //
-BOOL CALLBACK ImageProc(
+INT_PTR CALLBACK ImageProc(
 	HWND	hDlg,
 	UINT	msg,
 	WPARAM	wParam,
@@ -114,7 +114,7 @@ void OnInitDialog(HWND hDlg, LPARAM lParam)
 {
 	//	store the device number
 
-	SetWindowLong(hDlg, GWL_USERDATA, lParam);
+	SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 
 	//	set controls text
 
@@ -137,7 +137,7 @@ void OnInitDialog(HWND hDlg, LPARAM lParam)
 void OnChangeClicked(HWND hDlg)
 {
 	DialogBoxParam(hAppInst, MAKEINTRESOURCE(IDD_LETTER),
-		hDlg, LetterProc, GetWindowLong(hDlg, GWL_USERDATA));
+		hDlg, LetterProc, GetWindowLongPtr(hDlg, GWLP_USERDATA));
 }
 
 //
@@ -149,7 +149,7 @@ void OnProtectClicked(HWND hDlg, HWND hButton)
 	DWORD	ret;
 
 	hDevice = VfdOpenDevice(
-		GetWindowLong(hDlg, GWL_USERDATA));
+		GetWindowLongPtr(hDlg, GWLP_USERDATA));
 
 	if (hDevice != INVALID_HANDLE_VALUE) {
 
@@ -178,7 +178,7 @@ void OnOpenClicked(HWND hDlg, HWND hButton)
 {
 	DWORD	ret;
 
-	ret = VfdGuiOpen(hDlg, GetWindowLong(hDlg, GWL_USERDATA));
+	ret = VfdGuiOpen(hDlg, GetWindowLongPtr(hDlg, GWLP_USERDATA));
 
 	if (ret == ERROR_SUCCESS) {
 		SendMessage(hButton, BM_SETSTYLE, BS_PUSHBUTTON, TRUE);
@@ -196,7 +196,7 @@ void OnSaveClicked(HWND hDlg)
 {
 	DWORD ret;
 
-	ret = VfdGuiSave(hDlg, GetWindowLong(hDlg, GWL_USERDATA));
+	ret = VfdGuiSave(hDlg, GetWindowLongPtr(hDlg, GWLP_USERDATA));
 
 	if (ret == ERROR_SUCCESS) {
 		AppendLogMessage(0, MSG_IMAGE_SAVED);
@@ -213,7 +213,7 @@ void OnCloseClicked(HWND hDlg, HWND hButton)
 {
 	DWORD ret;
 
-	ret = VfdGuiClose(hDlg, GetWindowLong(hDlg, GWL_USERDATA));
+	ret = VfdGuiClose(hDlg, GetWindowLongPtr(hDlg, GWLP_USERDATA));
 
 	if (ret == ERROR_SUCCESS || ret == ERROR_NOT_READY) {
 		SendMessage(hButton, BM_SETSTYLE, BS_PUSHBUTTON, TRUE);
@@ -221,7 +221,7 @@ void OnCloseClicked(HWND hDlg, HWND hButton)
 	}
 	else {
 		AppendLogMessage(ret, MSG_ERR_IMAGE_CLOSE,
-			GetWindowLong(hDlg, GWL_USERDATA) + '0');
+			GetWindowLongPtr(hDlg, GWLP_USERDATA) + '0');
 	}
 }
 
@@ -232,7 +232,7 @@ void OnFormatClicked(HWND hDlg)
 {
 	DWORD ret;
 
-	ret = VfdGuiFormat(hDlg, GetWindowLong(hDlg, GWL_USERDATA));
+	ret = VfdGuiFormat(hDlg, GetWindowLongPtr(hDlg, GWLP_USERDATA));
 
 	if (ret == ERROR_SUCCESS) {
 		AppendLogMessage(0, MSG_IMAGE_FORMATTED);
@@ -290,7 +290,7 @@ void OnRefreshDialog(HWND hDlg)
 
 	//	open the device
 
-	hDevice = VfdOpenDevice(GetWindowLong(hDlg, GWL_USERDATA));
+	hDevice = VfdOpenDevice(GetWindowLongPtr(hDlg, GWLP_USERDATA));
 
 	if (hDevice == INVALID_HANDLE_VALUE) {
 		AppendLogMessage(GetLastError(), 0);
@@ -419,7 +419,7 @@ void OnRefreshDialog(HWND hDlg)
 //
 //	change drive letter dialog procedure
 //
-BOOL CALLBACK LetterProc(
+INT_PTR CALLBACK LetterProc(
 	HWND	hDlg,
 	UINT	msg,
 	WPARAM	wParam,
@@ -549,10 +549,10 @@ BOOL OnLetterInit(HWND hDlg, ULONG nDevice)
 		persistent ? BST_CHECKED : BST_UNCHECKED);
 
 	//	store the device number
-	SetWindowLong(hDlg, GWL_USERDATA, nDevice);
+	SetWindowLongPtr(hDlg, GWLP_USERDATA, nDevice);
 
 	//	store the current drive letter
-	SetWindowLong(hDlg, DWL_USER, MAKELONG(buf[0], persistent));
+	SetWindowLongPtr(hDlg, DWLP_USER, MAKELONG(buf[0], persistent));
 
 	return TRUE;
 }
@@ -575,7 +575,7 @@ void OnLetterChange(HWND hDlg)
 
 	//	Get the original drive letter
 
-	letter = GetWindowLong(hDlg, DWL_USER);
+	letter = GetWindowLongPtr(hDlg, DWLP_USER);
 
 	//	Drive letter changed ?
 
@@ -625,12 +625,12 @@ void OnLetterOK(HWND hDlg)
 
 	//	Get the original drive letter
 
-	letter = GetWindowLong(hDlg, DWL_USER);
+	letter = GetWindowLongPtr(hDlg, DWLP_USER);
 
 	//	Open the VFD drive
 
 	hDevice = VfdOpenDevice(
-		GetWindowLong(hDlg, GWL_USERDATA));
+		GetWindowLongPtr(hDlg, GWLP_USERDATA));
 
 	if (hDevice == INVALID_HANDLE_VALUE) {
 		ShowErrorMessage(GetLastError(), MSG_ERR_APP_INTERNAL);

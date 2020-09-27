@@ -179,11 +179,11 @@ void OnInit(
 {
 	//	Store parameters
 
-	SetWindowLong(hDlg, GWL_USERDATA, (ULONG)pParam);
+	SetWindowLongPtr(hDlg, GWLP_USERDATA, (ULONG)pParam);
 
 	//	clear the target existence flag
 
-	SetWindowLong(hDlg, DWL_USER, 0);
+	SetWindowLongPtr(hDlg, DWLP_USER, 0);
 
 	// Set dialog window title
 
@@ -244,7 +244,7 @@ void OnTarget(
 
 	//	clear the target existence flag
 
-	SetWindowLong(hDlg, DWL_USER, 0);
+	SetWindowLongPtr(hDlg, DWLP_USER, 0);
 
 	//	clear the description and hint text
 
@@ -277,7 +277,7 @@ void OnTarget(
 	//
 	//	get the current image info
 	//
-	param = (PCSAVE_PARAM)GetWindowLong(hDlg, GWL_USERDATA);
+	param = (PCSAVE_PARAM)GetWindowLongPtr(hDlg, GWLP_USERDATA);
 
 	if (_stricmp(param->ImageName, buf) == 0) {
 
@@ -367,7 +367,7 @@ void OnTarget(
 
 	//	target file exists and overwritable
 
-	SetWindowLong(hDlg, DWL_USER, 1);
+	SetWindowLongPtr(hDlg, DWLP_USER, 1);
 }
 
 
@@ -422,7 +422,7 @@ void OnOverwrite(
 	HWND			hDlg,
 	HWND			hCheck)
 {
-	if (GetWindowLong(hDlg, DWL_USER)) {
+	if (GetWindowLongPtr(hDlg, DWLP_USER)) {
 		//	the target file exists and overwritable
 		if (SendMessage(hCheck, BM_GETCHECK, 0, 0) != BST_CHECKED) {
 			EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
@@ -453,7 +453,7 @@ DWORD OnOK(
 	BOOL			truncate;
 	DWORD			ret;
 
-	param = (PCSAVE_PARAM)GetWindowLong(hDlg, GWL_USERDATA);
+	param = (PCSAVE_PARAM)GetWindowLongPtr(hDlg, GWLP_USERDATA);
 
 	if (!param) {
 		return ERROR_INVALID_FUNCTION;
@@ -465,7 +465,7 @@ DWORD OnOK(
 		return ERROR_INVALID_FUNCTION;
 	}
 
-	if (GetWindowLong(hDlg, DWL_USER)) {
+	if (GetWindowLongPtr(hDlg, DWLP_USER)) {
 		//	the target file exists and overwritable
 		overwrite = (IsDlgButtonChecked(hDlg, IDC_OVERWRITE) == BST_CHECKED);
 		truncate = (IsDlgButtonChecked(hDlg, IDC_TRUNCATE) == BST_CHECKED);

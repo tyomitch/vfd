@@ -80,7 +80,7 @@ static void ShowHelpWindow(HWND hDlg, UINT nCtrl);
 //
 //	Main Dialog Procedure
 //
-BOOL CALLBACK MainProc(
+INT_PTR CALLBACK MainProc(
 	HWND hDlg,
 	UINT msg,
 	WPARAM wParam,

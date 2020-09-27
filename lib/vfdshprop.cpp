@@ -31,7 +31,7 @@
 //
 //	local functions
 //
-static BOOL CALLBACK VfdPageDlgProc(
+static INT_PTR CALLBACK VfdPageDlgProc(
 	HWND			hDlg,
 	UINT			uMessage,
 	WPARAM			wParam,
@@ -72,7 +72,7 @@ UINT CALLBACK VfdPageCallback(
 //
 //	property page dialog procedure
 //
-BOOL CALLBACK VfdPageDlgProc(
+INT_PTR CALLBACK VfdPageDlgProc(
 	HWND			hDlg,
 	UINT			uMessage,
 	WPARAM			wParam,
@@ -83,7 +83,7 @@ BOOL CALLBACK VfdPageDlgProc(
 
 	switch (uMessage) {
 	case WM_INITDIALOG:
-		SetWindowLong(hDlg, DWL_USER, lParam);
+		SetWindowLongPtr(hDlg, DWLP_USER, lParam);
 
 		if (lParam) {
 			lpcs = (LPCVFDSHEXT)((LPPROPSHEETPAGE)lParam)->lParam;
@@ -94,7 +94,7 @@ BOOL CALLBACK VfdPageDlgProc(
 		return TRUE;
 
 	case WM_COMMAND:
-		psp = (LPPROPSHEETPAGE)GetWindowLong(hDlg, DWL_USER);
+		psp = (LPPROPSHEETPAGE)GetWindowLongPtr(hDlg, DWLP_USER);
 
 		if (!psp) {
 			break;
@@ -161,7 +161,7 @@ BOOL CALLBACK VfdPageDlgProc(
 
 	default:
 		if (uMessage == g_nNotifyMsg) {
-			psp = (LPPROPSHEETPAGE)GetWindowLong(hDlg, DWL_USER);
+			psp = (LPPROPSHEETPAGE)GetWindowLongPtr(hDlg, DWLP_USER);
 
 			if (!psp) {
 				break;

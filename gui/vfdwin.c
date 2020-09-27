@@ -62,14 +62,6 @@ int WINAPI WinMain(
 	_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
 
 	//
-	//	Check the Operating System version
-	//
-	if (!VfdIsValidPlatform()) {
-		ShowErrorMessage(0, MSG_ERR_WRONG_PLATFORM);
-		return -1;
-	}
-
-	//
 	//	Save the application instance handle
 	//
 	hAppInst = hInstance;

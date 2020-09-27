@@ -258,7 +258,7 @@ STDMETHODIMP CVfdShExt::QueryContextMenu(
 //
 
 STDMETHODIMP CVfdShExt::GetCommandString(
-	UINT			idCmd,
+	UINT_PTR		idCmd,
 	UINT			uFlags,
 	UINT			*reserved,
 	LPSTR			pszName,

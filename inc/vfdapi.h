@@ -203,10 +203,6 @@ CHAR WINAPI VfdChooseLetter();
 //	utility functions
 //==============================
 
-//	Check running platform
-
-BOOL WINAPI VfdIsValidPlatform();
-
 //	Get VFD notification message value
 
 UINT WINAPI VfdGetNotifyMessage();

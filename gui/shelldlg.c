@@ -81,7 +81,7 @@ static void		DeleteLink(LPTSTR path);
 //
 //	Shell Dialog Procedure
 //
-BOOL CALLBACK ShellProc(
+INT_PTR CALLBACK ShellProc(
 	HWND	hDlg,
 	UINT	msg,
 	WPARAM	wParam,
@@ -110,7 +110,7 @@ BOOL CALLBACK ShellProc(
 			//	It seems both DWL_MSGRESULT *and* return value
 			//	are necessary to prevent items from collapsing
 			lParam = OnTreeNotify(hDlg, (LPNMHDR)lParam);
-			SetWindowLong(hDlg, DWL_MSGRESULT, lParam);
+			SetWindowLongPtr(hDlg, DWLP_MSGRESULT, lParam);
 			return lParam;
 		}
 		break;

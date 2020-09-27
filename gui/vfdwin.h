@@ -33,12 +33,12 @@ enum {
 
 //	dialog procedures
 
-BOOL CALLBACK MainProc	(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK ImageProc	(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK DriverProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK AssocProc	(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK ShellProc (HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK AboutProc	(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK MainProc	(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK ImageProc	(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK DriverProc (HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK AssocProc	(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK ShellProc  (HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK AboutProc	(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
 //	Message Functions
 

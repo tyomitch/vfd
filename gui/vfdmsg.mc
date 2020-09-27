@@ -1225,15 +1225,6 @@ Language=Japanese
 .
 
 MessageId=
-SymbolicName=MSG_ERR_WRONG_PLATFORM
-Language=English
-Virtual Floppy Drive does not run on Windows 95/98/Me.
-.
-Language=Japanese
-Windows 95/98/Me Ç≈ÇÕìÆçÏÇµÇ‹ÇπÇÒÅB
-.
-
-MessageId=
 SymbolicName=MSG_ERR_INVALID_PARAM
 Language=English
 Invalid command line parameter %1!s!.

@@ -80,5 +80,3 @@ EXPORTS
 	VfdGuiFormat
 	VfdToolTip
 	VfdImageTip
-
-	VfdIsValidPlatform

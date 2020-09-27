@@ -19,9 +19,6 @@
 #include "vfdio.h"
 #include "vfdlib.h"
 
-#define ZLIB_WINAPI
-#include "zlib.h"
-
 #ifdef VFD_NO_ZLIB
 #pragma message("ZIP image support is disabled.")
 
@@ -46,6 +43,9 @@ DWORD ExtractZipImage(
 }
 
 #else	// VFD_NO_ZLIB
+
+#define ZLIB_WINAPI
+#include "zlib.h"
 
 #ifdef _DEBUG
 static const char *ZLIB_ERROR(int err)

@@ -75,33 +75,6 @@ BOOL WINAPI DllMain(
 	return TRUE;
 }
 
-//
-//	Check running platform
-//
-BOOL WINAPI VfdIsValidPlatform()
-{
-	BOOL (WINAPI *pfnIsWow64Process)(HANDLE, PBOOL);
-	BOOL wow64;
-
-	if (GetVersion() & 0x80000000) {
-		return FALSE;		// doesn't work on Win9x
-	}
-
-	pfnIsWow64Process = (BOOL (WINAPI *)(HANDLE, PBOOL))
-		GetProcAddress(GetModuleHandle("kernel32.dll"), "IsWow64Process");
-
-	if (pfnIsWow64Process == NULL) {
-		return TRUE;		// NT4 or 2000 -- assured to be 32 bit
-	}
-
-	wow64 = FALSE;
-
-	if (!pfnIsWow64Process(GetCurrentProcess(), &wow64)) {
-		return FALSE;
-	}
-
-	return !wow64;
-}
 
 //
 //	Get VFD notification message value

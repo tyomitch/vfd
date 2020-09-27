@@ -32,7 +32,7 @@ static void OnUrlClick(HWND hDlg);
 //
 //	About dialog message dispatcher
 //
-BOOL CALLBACK AboutProc(
+INT_PTR CALLBACK AboutProc(
 	HWND hDlg,
 	UINT msg,
 	WPARAM wParam,
