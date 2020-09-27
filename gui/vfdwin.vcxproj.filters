@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header">
+      <UniqueIdentifier>{6a5697d3-422e-4f3b-9281-69cda2f17b0f}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{5288335f-7272-4489-a9fb-55bb4ea80870}</UniqueIdentifier>
+      <Extensions>c;cpp</Extensions>
+    </Filter>
+    <Filter Include="GUI Resource">
+      <UniqueIdentifier>{16bab88c-1500-4ded-97ca-c2fb2e12ffd9}</UniqueIdentifier>
+      <Extensions>ico;bmp;rc</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="registry.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="vfdwin.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="aboutdlg.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="assocdlg.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="driverdlg.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="imagedlg.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="maindlg.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="registry.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="shelldlg.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vfdwin.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\lib\res\config.ico">
+      <Filter>GUI Resource</Filter>
+    </Image>
+    <Image Include="..\lib\res\image.ico">
+      <Filter>GUI Resource</Filter>
+    </Image>
+    <Image Include="res\imagelist.bmp">
+      <Filter>GUI Resource</Filter>
+    </Image>
+    <Image Include="..\lib\res\vfd.ico">
+      <Filter>GUI Resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="vfdwin.rc">
+      <Filter>GUI Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="vfdmsg.mc" />
+    <CustomBuild Include="vfdwin.rs" />
+  </ItemGroup>
+</Project>

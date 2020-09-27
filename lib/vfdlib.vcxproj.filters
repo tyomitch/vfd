@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="gui">
+      <UniqueIdentifier>{a052d588-4dfd-455a-8562-ad1c521ce8e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\resource">
+      <UniqueIdentifier>{9749e8e5-4ef0-4912-a904-e2e21021f320}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shell extension">
+      <UniqueIdentifier>{788f4fc0-1cfc-4c5a-81f5-9c5f86ae234a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\config.ico">
+      <Filter>gui\resource</Filter>
+    </Image>
+    <Image Include="res\image.ico">
+      <Filter>gui\resource</Filter>
+    </Image>
+    <Image Include="res\vfd.ico">
+      <Filter>gui\resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="vfdguiopen.c">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="vfdguisave.c">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="vfdguitip.c">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="vfdguiut.c">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="vfdshcfact.cpp">
+      <Filter>shell extension</Filter>
+    </ClCompile>
+    <ClCompile Include="vfdshext.cpp">
+      <Filter>shell extension</Filter>
+    </ClCompile>
+    <ClCompile Include="vfdshmenu.cpp">
+      <Filter>shell extension</Filter>
+    </ClCompile>
+    <ClCompile Include="vfdshprop.cpp">
+      <Filter>shell extension</Filter>
+    </ClCompile>
+    <ClCompile Include="vfdshutil.cpp">
+      <Filter>shell extension</Filter>
+    </ClCompile>
+    <ClCompile Include="vfdctl.c" />
+    <ClCompile Include="vfdfat.c" />
+    <ClCompile Include="vfdlib.c" />
+    <ClCompile Include="vfdzip.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="vfdguirc.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="vfdshcfact.h">
+      <Filter>shell extension</Filter>
+    </ClInclude>
+    <ClInclude Include="vfdshext.h">
+      <Filter>shell extension</Filter>
+    </ClInclude>
+    <ClInclude Include="vfdshguid.h">
+      <Filter>shell extension</Filter>
+    </ClInclude>
+    <ClInclude Include="vfdlib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="vfdlib.rc">
+      <Filter>gui</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="vfdlib.def" />
+    <CustomBuild Include="vfdlib.rs" />
+    <CustomBuild Include="vfdmsg.mc" />
+  </ItemGroup>
+</Project>
