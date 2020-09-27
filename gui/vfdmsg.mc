@@ -1074,10 +1074,10 @@ Language=Japanese
 MessageId=
 SymbolicName=MSG_ABOUT_URL
 Language=English
-http://chitchat.at.infoseek.co.jp/vmware/vfd.html%0
+https://github.com/tyomitch/vfd%0
 .
 Language=Japanese
-http://chitchat.at.infoseek.co.jp/vmware/vfdj.html%0
+https://github.com/tyomitch/vfd%0
 .
 
 ;//
