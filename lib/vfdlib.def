@@ -1,0 +1,84 @@
+;
+;	vfdlib.def
+;
+;	Virtual Floppy Drive for Windows
+;	Driver control library
+;	Module definition
+;
+;	Copyright (C) 2003-2008 Ken Kato
+;
+
+EXPORTS
+;
+;	Requirement for a shell extension DLL
+;
+	DllCanUnloadNow		private
+	DllGetClassObject	private
+
+;
+;	Shell extension management functions
+;
+	VfdRegisterHandlers
+	VfdUnregisterHandlers
+	VfdCheckHandlers
+
+;
+;	Driver management functions
+;
+	VfdInstallDriver
+	VfdConfigDriver
+	VfdRemoveDriver
+	VfdStartDriver
+	VfdStopDriver
+	VfdGetDriverConfig
+	VfdGetDriverState
+
+;
+;	Device control functions
+;
+	VfdOpenDevice
+	VfdGetDeviceNumber
+	VfdGetDeviceName
+	VfdGetDriverVersion
+
+	VfdOpenImage
+	VfdCloseImage
+	VfdGetImageInfo
+	VfdSaveImage
+	VfdFormatMedia
+	VfdGetMediaState
+	VfdWriteProtect
+	VfdDismountVolume
+
+	VfdSetGlobalLink
+	VfdGetGlobalLink
+	VfdSetLocalLink
+	VfdGetLocalLink
+
+;
+;	Other utility functions
+;
+	VfdGetNotifyMessage
+
+	VfdChooseLetter
+	VfdCheckDriverFile
+	VfdCheckImageFile
+	VfdCreateImageFile
+
+	VfdLookupMedia
+	VfdGetMediaSize
+	VfdMediaTypeName
+
+	VfdMakeFileDesc
+
+;
+;	GUI utility functions
+;
+	VfdGuiOpen
+	VfdGuiSave
+	VfdGuiClose
+	VfdGuiFormat
+	VfdToolTip
+	VfdImageTip
+
+	VfdIsValidPlatform

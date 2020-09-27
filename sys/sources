@@ -1,0 +1,15 @@
+#
+# sys/SOURCES
+#
+# Virtual Floppy Drive for Windows NT platform
+# Kernel mode driver: build parameter file for Windows DDK
+#
+# Copyright (c) 2003-2005 Ken Kato
+#
+
+TARGETNAME=vfd
+TARGETPATH=obj
+TARGETTYPE=DRIVER
+INCLUDES=..\inc
+SOURCES=vfddrv.c vfddev.c vfdioctl.c vfdimg.c vfdrdwr.c vfdlink.c \
+	vfdfmt.c vfdmnt.c vfdpnp.c vfddbg.c vfddrv.rc

@@ -1,0 +1,42 @@
+
+FILES and DIRECTORIES
+
+    .\cmd\          VFD.EXE program source and VC++6 project file
+    .\gui\          VFDWIN.EXE program source and VC++6 project file
+    .\inc\          Files shared between user mode programs and the driver
+    .\lib\          VFD.DLL library source and VC++6 project file
+    .\sys\          VFD.SYS driver source and DDK makefile
+    .\zlib\         zlib library for zip compressed image handling
+
+    .\vfd.dsp       wrapper VC++6 project to build all vfd programms at once
+    .\vfd.dsw       VC++6 workspace file
+
+REQUIREMENTS
+
+    User mode programs:
+
+        Microsoft Visual C++ 6.0
+        - Preferably with the latest service pack.
+        - If you can convert the project files, you should be able to use
+          other compilers (Visual Studio .NET, Boland, DMC, etc.)
+
+        zlib header files and pre-built static library
+        - see readme.txt in the .\zlib\ subdirectory.
+
+        Preferably the latest Windows Platform SDK.
+
+    Kernel mode driver:
+
+        Microsoft Windows DDK
+        - Windows 2000 DDK or Windows XP DDK preferred,
+          although Windows NT DDK should also be OK.
+
+BUILD
+
+    User mode programs:
+
+        Use the .\vfd.dsw workspace file
+
+    Kernel mode driver:
+
+        Run the BUILD DDK utility from the .\sys\ subdirectory

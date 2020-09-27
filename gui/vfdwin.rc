@@ -1,0 +1,245 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Æ­°Ä×Ù resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#pragma code_page(932)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_CONFIG_ICON         ICON    DISCARDABLE     "..\\lib\\res\\config.ico"
+IDI_OPEN_ICON           ICON    DISCARDABLE     "..\\lib\\res\\vfd.ico"
+IDI_IMAGE_ICON          ICON    DISCARDABLE     "..\\lib\\res\\image.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_IMAGELIST           BITMAP  DISCARDABLE     "res\\imagelist.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOGEX 0, 0, 264, 242
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_APPWINDOW
+CAPTION "Virtual Floppy Drive Control Panel"
+CLASS "vfdwin"
+FONT 9, "MS Shell Dlg"
+BEGIN
+    LTEXT           "",IDC_STATIC,1,227,262,14,SS_SUNKEN | NOT WS_GROUP
+    LTEXT           "Status",IDC_CURRENT_STATE,5,230,254,8,SS_CENTERIMAGE
+    EDITTEXT        IDC_LOG_MESSAGE,14,130,236,80,ES_MULTILINE | ES_READONLY | 
+                    WS_VSCROLL | WS_GROUP | NOT WS_TABSTOP
+    CONTROL         "Tab1",IDC_TAB_CONTROL,"SysTabControl32",WS_GROUP | 
+                    WS_TABSTOP,5,5,254,216
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 250, 200
+STYLE DS_CONTROL | WS_CHILD
+EXSTYLE WS_EX_CONTEXTHELP
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CTEXT           "Virtual Floppy Drive for Windows",IDC_ABOUT_TITLE,35,7,
+                    180,8,NOT WS_GROUP
+    PUSHBUTTON      "http://chitchat.at.infoseek.co.jp/vmware/vfd.html",
+                    IDC_ABOUT_URL,25,31,200,14
+    ICON            IDI_OPEN_ICON,IDC_STATIC,7,7,20,20
+    EDITTEXT        IDC_ABOUT_HELP,7,51,236,142,ES_MULTILINE | ES_READONLY | 
+                    WS_VSCROLL | NOT WS_TABSTOP
+    CTEXT           "Copyright (c) 2003-2008 Ken Kato",IDC_ABOUT_COPYRIGHT,
+                    35,17,180,8,NOT WS_GROUP
+END
+
+IDD_DRIVER DIALOGEX 0, 0, 250, 105
+STYLE DS_CONTROL | WS_CHILD
+EXSTYLE WS_EX_CONTEXTHELP
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Driver &File:",IDC_DRIVER_LABEL,7,10,42,8,
+                    SS_CENTERIMAGE
+    EDITTEXT        IDC_DRIVER_PATH,54,8,136,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse... ",IDC_BROWSE,193,7,50,14,WS_GROUP
+    LTEXT           "Version:",IDC_VERSION_LABEL,7,26,42,8,SS_CENTERIMAGE
+    LTEXT           "driver version",IDC_VERSION,54,26,189,8
+    LTEXT           "Start Type:",IDC_START_LABEL,7,42,42,8,SS_CENTERIMAGE
+    CONTROL         "&Manual",IDC_START_MANUAL,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,54,42,44,8
+    CONTROL         "&Auto",IDC_START_AUTO,"Button",BS_AUTORADIOBUTTON,104,
+                    42,43,8
+    PUSHBUTTON      "&Apply",IDC_APPLY,193,38,50,14
+    PUSHBUTTON      "&Install",IDC_INSTALL,7,91,56,14,WS_GROUP
+    PUSHBUTTON      "&Start",IDC_START,67,91,56,14
+    PUSHBUTTON      "&Stop",IDC_STOP,127,91,56,14
+    PUSHBUTTON      "&Uninstall",IDC_REMOVE,187,91,56,14
+END
+
+IDD_ASSOC DIALOGEX 0, 0, 250, 200
+STYLE DS_CONTROL | WS_CHILD
+EXSTYLE WS_EX_CONTEXTHELP
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CONTROL         "List1",IDC_ASSOC_LIST,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | 
+                    LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,7,7,
+                    236,164
+    PUSHBUTTON      "&New Extension",IDC_NEW,7,179,56,14,WS_GROUP
+    PUSHBUTTON      "&Check All",IDC_ALL,67,179,56,14
+    PUSHBUTTON      "&Uncheck All",IDC_CLEAR,127,179,56,14
+    PUSHBUTTON      "&Apply",IDC_APPLY,187,179,56,14,WS_DISABLED
+    LTEXT           "Why can't I edit associations?",IDC_ASSOC_MESSAGE,7,171,
+                    236,22,NOT WS_VISIBLE
+END
+
+IDD_SHELL DIALOGEX 0, 0, 250, 200
+STYLE DS_CONTROL | WS_CHILD
+EXSTYLE WS_EX_CONTEXTHELP
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "&Apply",IDC_APPLY,187,179,56,14,WS_DISABLED
+    CONTROL         "Tree1",IDC_SHELL_TREE,"SysTreeView32",
+                    TVS_DISABLEDRAGDROP | WS_BORDER | WS_TABSTOP,7,7,236,164
+END
+
+IDD_NEWEXT DIALOGEX 0, 0, 120, 50
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "New Extension"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "File Extension:",IDC_NEWEXT_LABEL,10,7,56,14,
+                    SS_CENTERIMAGE
+    EDITTEXT        IDC_EXTENSION,68,7,40,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,7,28,50,14,WS_DISABLED
+    PUSHBUTTON      "Cancel",IDCANCEL,62,28,50,14
+END
+
+IDD_IMAGE DIALOGEX 0, 0, 250, 105
+STYLE DS_CONTROL | WS_CHILD
+EXSTYLE WS_EX_CONTEXTHELP
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Drive Letter:",IDC_LETTER_LABEL,7,9,52,8
+    EDITTEXT        IDC_DRIVE_LETTER,60,9,125,12,ES_AUTOHSCROLL | 
+                    ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    PUSHBUTTON      "Change",IDC_CHANGE,187,7,56,14
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,25,236,1
+    LTEXT           "Image File:",IDC_IMAGEFILE_LABEL,7,32,52,8
+    EDITTEXT        IDC_IMAGEFILE,60,32,183,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_BORDER | NOT WS_TABSTOP
+    LTEXT           "Description:",IDC_DESCRIPTION_LABEL,7,47,52,8
+    EDITTEXT        IDC_DESCRIPTION,60,47,183,12,ES_AUTOHSCROLL | 
+                    ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    LTEXT           "Disk Type:",IDC_DISKTYPE_LABEL,7,62,52,8
+    EDITTEXT        IDC_DISKTYPE,60,62,58,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_BORDER | NOT WS_TABSTOP
+    LTEXT           "Media Type:",IDC_MEDIATYPE_LABEL,120,62,52,8
+    EDITTEXT        IDC_MEDIATYPE,173,62,70,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_BORDER | NOT WS_TABSTOP
+    CONTROL         "&Write Protect",IDC_PROTECT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,67,77,176,8
+    PUSHBUTTON      "&Open...",IDC_OPEN,7,91,56,14
+    PUSHBUTTON      "&Save...",IDC_SAVE,67,91,56,14
+    PUSHBUTTON      "&Close",IDC_CLOSE,127,91,56,14
+    PUSHBUTTON      "&Format",IDC_FORMAT,187,91,56,14
+END
+
+IDD_LETTER DIALOGEX 0, 0, 120, 64
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Drive Letter"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Drive Letter:",IDC_LETTER_LABEL,7,9,50,8
+    COMBOBOX        IDC_DRIVE_LETTER,62,7,50,70,CBS_DROPDOWNLIST | CBS_SORT | 
+                    CBS_UPPERCASE | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Persistent / Global",IDC_PERSISTENT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,25,105,10
+    DEFPUSHBUTTON   "OK",IDOK,7,42,50,14,WS_DISABLED
+    PUSHBUTTON      "Cancel",IDCANCEL,62,42,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_IMAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 98
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR ACCELERATORS DISCARDABLE 
+BEGIN
+    VK_F5,          IDC_REFRESH,            VIRTKEY, NOINVERT
+END
+
+#endif    // Æ­°Ä×Ù resources
+/////////////////////////////////////////////////////////////////////////////
+
+
