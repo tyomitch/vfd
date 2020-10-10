@@ -216,7 +216,7 @@ void OnInitDialog(
 
 			VFDTRACE(0,("%s", GetSystemMessage(GetLastError())));
 
-			strcpy(title, ChildTable[i].sFallback);
+			strcpy_s(title, sizeof(title), ChildTable[i].sFallback);
 		}
 
 		if (TabCtrl_InsertItem(hTab, i, &item) == -1) {
@@ -548,7 +548,7 @@ void OnVfdRefresh(HWND hDlg, WPARAM reason, LPARAM param)
 
 	if (pending && !hWatchThread) {
 		hWatchThread = CreateThread(
-			NULL, 0, WatchDriverState, (LPVOID)driver_state, 0, NULL);
+			NULL, 0, WatchDriverState, (LPVOID)(UINT_PTR)driver_state, 0, NULL);
 	}
 }
 
@@ -571,7 +571,7 @@ DWORD WINAPI WatchDriverState(LPVOID param)
 			return 0;
 		}
 	}
-	while (state == (DWORD)param);
+	while (state == (DWORD)(UINT_PTR)param);
 
 	if (state == SERVICE_RUNNING) {
 		reason = VFD_OPERATION_START;

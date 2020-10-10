@@ -46,7 +46,7 @@ static INT_PTR CALLBACK LetterProc(
 	WPARAM wParam,
 	LPARAM lParam);
 
-static BOOL OnLetterInit	(HWND hDlg, ULONG nDrive);
+static BOOL OnLetterInit	(HWND hDlg, LONG_PTR nDrive);
 static void OnLetterChange	(HWND hDlg);
 static void OnLetterOK		(HWND hDlg);
 
@@ -304,17 +304,17 @@ void OnRefreshDialog(HWND hDlg)
 	buf[0] = '\0';
 
 	if (isalpha(letter)) {
-		sprintf(buf, "%c (", letter);
+		sprintf_s(buf, sizeof(buf), "%c (", letter);
 		GetLocalMessage(MSG_PERSISTENT, &buf[3], sizeof(buf) - 3);
-		strcat(buf, ")");
+		strcat_s(buf, sizeof(buf), ")");
 	}
 	else {
 		VfdGetLocalLink(hDevice, &letter);
 
 		if (isalpha(letter)) {
-			sprintf(buf, "%c (", letter);
+			sprintf_s(buf, sizeof(buf), "%c (", letter);
 			GetLocalMessage(MSG_EPHEMERAL, &buf[3], sizeof(buf) - 3);
-			strcat(buf, ")");
+			strcat_s(buf, sizeof(buf), ")");
 		}
 	}
 
@@ -365,7 +365,7 @@ void OnRefreshDialog(HWND hDlg)
 	}
 	else {
 		if (disk_type != VFD_DISKTYPE_FILE) {
-			strcpy(buf, "<RAM>");
+			strcpy_s(buf, sizeof(buf), "<RAM>");
 		}
 		file_type = VFD_FILETYPE_NONE;
 		attrib = 0;
@@ -456,7 +456,7 @@ INT_PTR CALLBACK LetterProc(
 //
 //	initialize the drive letter dialog
 //
-BOOL OnLetterInit(HWND hDlg, ULONG nDevice)
+BOOL OnLetterInit(HWND hDlg, LONG_PTR nDevice)
 {
 	HANDLE	hDevice;
 	CHAR	buf[20];
@@ -490,7 +490,7 @@ BOOL OnLetterInit(HWND hDlg, ULONG nDevice)
 	//	add <none>
 
 	if (!GetLocalMessage(MSG_GENERIC_NONE, buf, sizeof(buf))) {
-		strcpy(buf, "(none)");
+		strcpy_s(buf, sizeof(buf), "(none)");
 	}
 
 	SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)buf);
@@ -504,7 +504,7 @@ BOOL OnLetterInit(HWND hDlg, ULONG nDevice)
 		return FALSE;
 	}
 
-	strcpy(buf, "A:");
+	strcpy_s(buf, sizeof(buf), "A:");
 
 	while (buf[0] <= 'Z') {
 		if (!(logical & 0x01)) {
@@ -563,7 +563,7 @@ BOOL OnLetterInit(HWND hDlg, ULONG nDevice)
 void OnLetterChange(HWND hDlg)
 {
 	BOOL	persistent;
-	ULONG	letter;
+	LONG_PTR letter;
 	CHAR	buf[10];
 
 	//	Get combo box selection
@@ -579,7 +579,7 @@ void OnLetterChange(HWND hDlg)
 
 	//	Drive letter changed ?
 
-	if (!isalpha(LOWORD(letter)) && !isalpha(buf[0])) {
+	if (LOWORD(letter) <= 255 && !isalpha(LOWORD(letter)) && !isalpha(buf[0])) {
 		EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
 		return;
 	}
@@ -607,7 +607,7 @@ void OnLetterChange(HWND hDlg)
 void OnLetterOK(HWND hDlg)
 {
 	HANDLE	hDevice;
-	ULONG	letter;
+	LONG_PTR letter;
 	BOOL	persistent;
 	CHAR	buf[10];
 	DWORD	ret = ERROR_SUCCESS;
@@ -637,7 +637,7 @@ void OnLetterOK(HWND hDlg)
 		return;
 	}
 
-	if (isalpha(LOWORD(letter))) {
+	if (LOWORD(letter) <= 255 && isalpha(LOWORD(letter))) {
 
 		// delete the original drive letter
 

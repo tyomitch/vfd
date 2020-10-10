@@ -194,19 +194,9 @@ void OnInitDialog(HWND hDlg)
 
 	//	Shell extension
 
-	if (IS_WINDOWS_NT()) {
-
-		//	Windows NT doesn't support Drag & Drop handlers ???
-
-		InsertTreeItem(hDlg, hTree, hParent,
-			MSG_ITEM_SHELLEXT_NT, 0, ITEM_SHELLEXT,
-			(VfdCheckHandlers() == ERROR_SUCCESS), 0);
-	}
-	else {
 		InsertTreeItem(hDlg, hTree, hParent,
 			MSG_ITEM_SHELLEXT, 0, ITEM_SHELLEXT,
 			(VfdCheckHandlers() == ERROR_SUCCESS), 0);
-	}
 
 	//	Control Panel node
 
@@ -244,17 +234,6 @@ void OnInitDialog(HWND hDlg)
 
 	//	Drive 1 node
 
-	if (IS_WINDOWS_NT()) {
-
-		//	Windows NT shell does not combine shortcut parameters and
-		//	dropped file path.	If a file is dropped onto a shortcut
-		//	to "VFDWIN.EXE /OPEN 1:", the shell discards the parameters
-		//	in the shortcut and simply executes "VFDWIN.EXE <file>"
-
-		hParent = InsertTreeItem(hDlg, hTree, NULL,
-			MSG_TREE_DRIVE1_NT, 7, ITEM_PARENT, 0, 0);
-	}
-	else {
 		hParent = InsertTreeItem(hDlg, hTree, NULL,
 			MSG_TREE_DRIVE1, 6, ITEM_PARENT, 0, 0);
 
@@ -269,7 +248,6 @@ void OnInitDialog(HWND hDlg)
 		InsertTreeItem(hDlg, hTree, hParent,
 			MSG_ITEM_SENDTO, 0, ITEM_SHORTCUT,
 			1, CSIDL_SENDTO);
-	}
 
 	return;
 }
@@ -601,7 +579,7 @@ LPTSTR SearchVfdLink(
 	int				type)
 {
 	TCHAR			link_path[MAX_PATH];
-	int				link_path_len;
+	size_t			link_path_len;
 	WIN32_FIND_DATA find;
 	HANDLE			hFind;
 	IShellLink		*pLink;
@@ -614,7 +592,7 @@ LPTSTR SearchVfdLink(
 	//	format a link argument to look for
 
 	if (type >= 0) {	//	look for a VFD drive shortcut
-		sprintf(link_arg, VFD_OPEN_SWITCH " %d:", type);
+		sprintf_s(link_arg, sizeof(link_arg), VFD_OPEN_SWITCH " %d:", type);
 	}
 	else {
 		link_arg[0] = '\0';
@@ -630,7 +608,7 @@ LPTSTR SearchVfdLink(
 
 	//	search files with *.lnk extension
 
-	strcpy(link_path + link_path_len, "\\*.lnk");
+	strcpy_s(link_path + link_path_len, sizeof(link_path) - link_path_len, "\\*.lnk");
 
 	hFind = FindFirstFile(link_path, &find);
 
@@ -674,7 +652,7 @@ LPTSTR SearchVfdLink(
 
 		// compose the shortcut file's full path
 
-		strcpy(link_path + link_path_len, find.cFileName);
+		strcpy_s(link_path + link_path_len, sizeof(link_path) - link_path_len, find.cFileName);
 
 		//	load the shortcut file into an IShellLink object
 
@@ -696,7 +674,7 @@ LPTSTR SearchVfdLink(
 
 		//	does the link argument match?
 
-		if (type >= 0 && !strnicmp(args, link_arg, strlen(link_arg))) {
+		if (type >= 0 && !_strnicmp(args, link_arg, strlen(link_arg))) {
 			match = TRUE;
 			break;
 		}
@@ -731,7 +709,7 @@ LPTSTR SearchVfdLink(
 		return NULL;
 	}
 
-	strcpy(buf, link_path);
+	strcpy_s(buf, strlen(link_path) + 1, link_path);
 
 	return buf;
 }
@@ -852,7 +830,7 @@ LPTSTR CreateVfdLink(
 	char			path[MAX_PATH];
 	char			args[10];
 	char			desc[MAX_PATH];
-	int				len;
+	size_t			len;
 	HRESULT			res;
 	LPTSTR			buf;
 
@@ -862,24 +840,24 @@ LPTSTR CreateVfdLink(
 		return NULL;
 	}
 
-	strcat(path, "\\");
+	strcat_s(path, sizeof(path), "\\");
 
 	len = strlen (path);
 
 	if (type >= 0) {
 		GetLocalMessage(MSG_LINK_DRIVE,
-			path + len, sizeof(path) - len, type);
+			path + len, (DWORD)(sizeof(path) - len), type);
 
-		sprintf(args, VFD_OPEN_SWITCH " %d:", type);
+		sprintf_s(args, sizeof(args), VFD_OPEN_SWITCH " %d:", type);
 	}
 	else {
 		GetLocalMessage(MSG_LINK_CONFIG,
-			path + len, sizeof(path) - len);
+			path + len, (DWORD)(sizeof(path) - len));
 
 		args[0] = '\0';
 	}
 
-	strcat(path, ".lnk");
+	strcat_s(path, sizeof(path), ".lnk");
 
 	//	load link description string
 
@@ -915,7 +893,7 @@ LPTSTR CreateVfdLink(
 			strlen(path) + 1, GetSystemMessage(GetLastError())));
 	}
 	else {
-		strcpy(buf, path);
+		strcpy_s(buf, strlen(path) + 1, path);
 	}
 
 	return buf;

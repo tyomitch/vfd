@@ -49,7 +49,7 @@ BOOL WINAPI DllMain(
 		GetModuleBaseName(GetCurrentProcess(), hMod, name, sizeof(name));
 	}
 	else {
-		strcpy(name, "unknown");
+		strcpy_s(name, sizeof(name), "unknown");
 	}
 #endif	// _DEBUG
 
@@ -121,7 +121,7 @@ PCSTR SystemMessage(
 		FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL, nError, 0, msg, sizeof(msg), NULL)) {
 
-		_snprintf(msg, sizeof(msg),
+		sprintf_s(msg, sizeof(msg),
 			"Unknown system error %lu (0x%08x)\n", nError, nError);
 	}
 
@@ -139,12 +139,12 @@ void DebugTrace(
 	int				len;
 	va_list			args;
 
-	len = _snprintf(buf, sizeof(buf),
+	len = sprintf_s(buf, sizeof(buf),
 		"%s(%lu) : ", TraceFile, TraceLine);
 
 	va_start(args, sFormat);
 
-	_vsnprintf(buf + len, sizeof(buf) - len, sFormat, args);
+	vsprintf_s(buf + len, sizeof(buf) - len, sFormat, args);
 
 	OutputDebugString(buf);
 }

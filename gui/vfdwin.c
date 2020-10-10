@@ -202,7 +202,7 @@ int WINAPI WinMain(
 cleanup:
 	CoUninitialize();
 
-	return msg.wParam;
+	return (int)msg.wParam;
 }
 
 //
@@ -241,7 +241,7 @@ void CommandLine()
 		}
 
 		//	Quiet mode switch
-		else if (stricmp(*__argv, "/q") == 0) {
+		else if (_stricmp(*__argv, "/q") == 0) {
 			open_folder = FALSE;
 		}
 
@@ -555,7 +555,7 @@ void CommandLine()
 		//	get the default verb for folder object from the registry
 		RegQueryValue(HKEY_CLASSES_ROOT, "Folder\\shell", verb, &size);
 
-		ret = (DWORD)ShellExecute(
+		ret = (DWORD)(INT_PTR)ShellExecute(
 			NULL, verb[0] ? verb : NULL, drive, NULL, NULL, SW_SHOWNORMAL);
 
 		if (ret <= 32) {
@@ -648,8 +648,8 @@ void AppendLogMessage(DWORD err, DWORD msg, ...)
 {
 	TCHAR	buf[200];
 	DWORD	len;
-	DWORD	max;
-	DWORD	cur;
+	LONG_PTR max;
+	LONG_PTR cur;
 	HWND	hEdit;
 
 	//	get edit control handle
@@ -724,7 +724,7 @@ PCSTR GetSystemMessage(
 		FORMAT_MESSAGE_FROM_SYSTEM |
 		FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL, nError, 0, msg, sizeof(msg), NULL)) {
-		sprintf(msg, "Unknown system error %lu (0x%08x)\n", nError, nError);
+		sprintf_s(msg, sizeof(msg), "Unknown system error %lu (0x%08x)\n", nError, nError);
 	}
 
 	return msg;
@@ -745,11 +745,11 @@ void DebugTrace(
 	int		len;
 	va_list	args;
 
-	len = sprintf(buf, "%s(%lu) : ", TraceFile, TraceLine);
+	len = sprintf_s(buf, sizeof(buf), "%s(%lu) : ", TraceFile, TraceLine);
 
 	va_start(args, sFormat);
 
-	vsprintf(buf + len, sFormat, args);
+	vsprintf_s(buf + len, sizeof(buf) - len, sFormat, args);
 
 	va_end(args);
 

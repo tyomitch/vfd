@@ -29,7 +29,7 @@ static DWORD CopyRegistryTree(HKEY hKeyTo, HKEY hKeyFrom);
 //
 //	Get associated program name for extension
 //
-DWORD GetAssociatedProgram(LPCTSTR ext, LPTSTR prog)
+DWORD GetAssociatedProgram(LPCTSTR ext, LPTSTR prog, size_t prog_size)
 {
 	char	subkey[MAX_PATH];
 	char	buf[MAX_PATH];
@@ -47,7 +47,7 @@ DWORD GetAssociatedProgram(LPCTSTR ext, LPTSTR prog)
 
 	//	Read [HKEY_CLASSES_ROOT\<file type>\shell] -- default verb
 
-	strcat(subkey, "\\shell");
+	strcat_s(subkey, sizeof(subkey), "\\shell");
 
 	ret = ReadRegStrValue(subkey, NULL, buf);
 
@@ -57,7 +57,7 @@ DWORD GetAssociatedProgram(LPCTSTR ext, LPTSTR prog)
 
 	//	Read [HKEY_CLASSES_ROOT\<file type>\shell\<verb>\command] -- command line
 
-	sprintf(subkey + strlen(subkey), "\\%s\\command", buf[0] ? buf : "open");
+	sprintf_s(subkey + strlen(subkey), sizeof(subkey) - strlen(subkey), "\\%s\\command", buf[0] ? buf : "open");
 
 	if ((ret = ReadRegStrValue(subkey, NULL, buf)) != ERROR_SUCCESS) {
 		return ret == ERROR_FILE_NOT_FOUND ? ERROR_SUCCESS : ret;
@@ -97,22 +97,22 @@ DWORD GetAssociatedProgram(LPCTSTR ext, LPTSTR prog)
 			}
 
 			if (tail - buf >= 4) {
-				if (!strnicmp(tail - 4, ".exe", 4) ||
-					!strnicmp(tail - 4, ".cmd", 4) ||
-					!strnicmp(tail - 4, ".bat", 4) ||
-					!strnicmp(tail - 4, ".com", 4) ||
-					!strnicmp(tail - 4, ".vbs", 4) ||
-					!strnicmp(tail - 4, ".vbe", 4) ||
-					!strnicmp(tail - 4, ".jse", 4) ||
-					!strnicmp(tail - 4, ".wsf", 4) ||
-					!strnicmp(tail - 4, ".wsh", 4))
+				if (!_strnicmp(tail - 4, ".exe", 4) ||
+					!_strnicmp(tail - 4, ".cmd", 4) ||
+					!_strnicmp(tail - 4, ".bat", 4) ||
+					!_strnicmp(tail - 4, ".com", 4) ||
+					!_strnicmp(tail - 4, ".vbs", 4) ||
+					!_strnicmp(tail - 4, ".vbe", 4) ||
+					!_strnicmp(tail - 4, ".jse", 4) ||
+					!_strnicmp(tail - 4, ".wsf", 4) ||
+					!_strnicmp(tail - 4, ".wsh", 4))
 				{
 					found = TRUE;
 					break;
 				}
 			}
 			else if (tail - buf >= 3) {
-				if (!strnicmp(tail - 3, ".js",	3)) {
+				if (!_strnicmp(tail - 3, ".js",	3)) {
 					found = TRUE;
 					break;
 				}
@@ -144,7 +144,7 @@ DWORD GetAssociatedProgram(LPCTSTR ext, LPTSTR prog)
 
 	//	copy program file name to output buffer
 	*tail = '\0';
-	strcpy(prog, top);
+	strcpy_s(prog, prog_size, top);
 
 	return ERROR_SUCCESS;
 }
@@ -475,7 +475,7 @@ DWORD AddAssociation(
 		int i = 0;
 
 		for (;;) {
-			sprintf(filetype, "%s%s.%d", type_prefix, ext, i++);
+			sprintf_s(filetype, sizeof(filetype), "%s%s.%d", type_prefix, ext, i++);
 
 			ret = RegCreateKeyEx(
 				HKEY_CLASSES_ROOT, filetype, 0, "", 0, KEY_WRITE, NULL, &hNewKey, &created);
@@ -579,7 +579,7 @@ DWORD AddAssociation(
 
 	// create command line subkey
 
-	sprintf(buf, "shell\\%s\\command", verb);
+	sprintf_s(buf, sizeof(buf), "shell\\%s\\command", verb);
 
 	ret = RegCreateKeyEx(hNewKey, buf, 0, "", 0, KEY_WRITE, NULL, &hSub, NULL);
 
@@ -593,9 +593,9 @@ DWORD AddAssociation(
 
 	// set command line value
 
-	sprintf(buf, "\"%s\" \"%%1\"", program);
+	sprintf_s(buf, sizeof(buf), "\"%s\" \"%%1\"", program);
 
-	ret = RegSetValueEx(hSub, NULL, 0, REG_SZ, (LPBYTE)buf, strlen(buf) + 1);
+	ret = RegSetValueEx(hSub, NULL, 0, REG_SZ, (LPBYTE)buf, (DWORD)(strlen(buf) + 1));
 
 	RegCloseKey(hSub);
 
@@ -612,7 +612,7 @@ DWORD AddAssociation(
 	ret = RegOpenKeyEx(hNewKey, "shell", 0, KEY_WRITE, &hSub);
 
 	if (ret == ERROR_SUCCESS) {
-		ret = RegSetValueEx(hSub, NULL, 0, REG_SZ, (LPBYTE)verb, strlen(verb) + 1);
+		ret = RegSetValueEx(hSub, NULL, 0, REG_SZ, (LPBYTE)verb, (DWORD)(strlen(verb) + 1));
 
 		RegCloseKey(hSub);
 
@@ -633,12 +633,12 @@ DWORD AddAssociation(
 	//	verb description
 
 	if (verb_desc && *verb_desc) {
-		sprintf(buf, "shell\\%s", verb);
+		sprintf_s(buf, sizeof(buf), "shell\\%s", verb);
 
 		ret = RegOpenKeyEx(hNewKey, buf, 0, KEY_WRITE, &hSub);
 
 		if (ret == ERROR_SUCCESS) {
-			ret = RegSetValueEx(hSub, NULL, 0, REG_SZ, (LPBYTE)verb_desc, strlen(verb_desc) + 1);
+			ret = RegSetValueEx(hSub, NULL, 0, REG_SZ, (LPBYTE)verb_desc, (DWORD)(strlen(verb_desc) + 1));
 
 			RegCloseKey(hSub);
 
@@ -660,7 +660,7 @@ DWORD AddAssociation(
 	//	filetype description
 
 	if (type_desc && *type_desc) {
-		ret = RegSetValueEx(hNewKey, NULL, 0, REG_SZ, (LPBYTE)type_desc, strlen(type_desc) + 1);
+		ret = RegSetValueEx(hNewKey, NULL, 0, REG_SZ, (LPBYTE)type_desc, (DWORD)(strlen(type_desc) + 1));
 
 		if (ret != ERROR_SUCCESS) {
 			VFDTRACE(0, (
@@ -676,9 +676,9 @@ DWORD AddAssociation(
 		ret = RegCreateKeyEx(hNewKey, "DefaultIcon", 0, "", 0, KEY_WRITE, NULL, &hSub, NULL);
 
 		if (ret == ERROR_SUCCESS) {
-			sprintf(buf, "%s,%d", program, icon_idx);
+			sprintf_s(buf, sizeof(buf), "%s,%d", program, icon_idx);
 
-			ret = RegSetValueEx(hSub, NULL, 0, REG_SZ, (LPBYTE)buf, strlen(buf) + 1);
+			ret = RegSetValueEx(hSub, NULL, 0, REG_SZ, (LPBYTE)buf, (DWORD)(strlen(buf) + 1));
 
 			RegCloseKey(hSub);
 
@@ -701,7 +701,7 @@ DWORD AddAssociation(
 	//	New filetype tree successfully created, so update the extension's filetype
 	//
 	if (backup[0]) {
-		ret = RegSetValueEx(hExtKey, type_prefix, 0, REG_SZ, (LPBYTE)backup, strlen(backup) + 1);
+		ret = RegSetValueEx(hExtKey, type_prefix, 0, REG_SZ, (LPBYTE)backup, (DWORD)(strlen(backup) + 1));
 
 		if (ret != ERROR_SUCCESS) {
 			VFDTRACE(0, (
@@ -712,7 +712,7 @@ DWORD AddAssociation(
 		}
 	}
 
-	ret = RegSetValueEx(hExtKey, NULL, 0, REG_SZ, (LPBYTE)filetype, strlen(filetype) + 1);
+	ret = RegSetValueEx(hExtKey, NULL, 0, REG_SZ, (LPBYTE)filetype, (DWORD)(strlen(filetype) + 1));
 
 	if (ret != ERROR_SUCCESS) {
 		VFDTRACE(0, (

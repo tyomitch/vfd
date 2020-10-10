@@ -18,7 +18,8 @@ extern "C" {
 /*	Get the associated program name of an extension	*/
 DWORD GetAssociatedProgram(
 	LPCTSTR ext,
-	LPTSTR prog);
+	LPTSTR prog,
+	size_t prog_size);
 
 /*	Restore the previous association				*/
 DWORD RestoreAssociation(

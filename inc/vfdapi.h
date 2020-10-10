@@ -72,6 +72,7 @@ DWORD WINAPI VfdStopDriver(
 
 DWORD WINAPI VfdGetDriverConfig(
 	PSTR			sFileName,
+	size_t			ncFileName,
 	PDWORD			pStart);
 
 //	Get current driver state
@@ -86,7 +87,7 @@ DWORD WINAPI VfdGetDriverState(
 //	Open a VFD device
 
 HANDLE WINAPI VfdOpenDevice(
-	ULONG			nTarget);
+	ULONG_PTR		nTarget);
 
 //	Get the device number
 
@@ -277,25 +278,25 @@ DWORD WINAPI VfdCheckHandlers();
 
 DWORD WINAPI VfdGuiOpen(
 	HWND			hParent,	//	parent window
-	ULONG			nDevice);	//	device number
+	LONG_PTR		nDevice);	//	device number
 
 //	Save the current image
 
 DWORD WINAPI VfdGuiSave(
 	HWND			hParent,	//	parent window
-	ULONG			nDevice);	//	device number
+	LONG_PTR		nDevice);	//	device number
 
 //	close the current image
 
 DWORD WINAPI VfdGuiClose(
 	HWND			hParent,	//	parent window
-	ULONG			nDevice);	//	device number
+	LONG_PTR		nDevice);	//	device number
 
 //	format the current media
 
 DWORD WINAPI VfdGuiFormat(
 	HWND			hParent,	//	parent window
-	ULONG			nDevice);	//	device number
+	LONG_PTR		nDevice);	//	device number
 
 //	display a tooltip window
 

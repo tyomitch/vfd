@@ -47,13 +47,13 @@ static void OnListNotify(HWND hDlg, LPNMHDR pNMHDR);
 //	local functions
 //
 static void UpdateList(HWND hDlg);
-static int	AddItem(HWND hList, char *ext, char *prog);
+static int	AddItem(HWND hList, char *ext, char *prog, size_t prog_size);
 static void ToggleItem(HWND hList, int iItem);
 
 //
 //	Add extension dialog
 //
-static BOOL CALLBACK AddExtProc(
+static INT_PTR CALLBACK AddExtProc(
 	HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 static void OnAddExtEdit(HWND hDlg, HWND hEdit);
 
@@ -333,7 +333,7 @@ void UpdateList(HWND hDlg)
 					GetSystemMessage(GetLastError())));
 
 				// in case LoadString has failed
-				strcpy(msg, FALLBACK_CANT_WRITE);
+				strcpy_s(msg, sizeof(msg), FALLBACK_CANT_WRITE);
 			}
 		}
 		else {
@@ -350,7 +350,7 @@ void UpdateList(HWND hDlg)
 					GetSystemMessage(GetLastError())));
 
 				// in case LoadString has failed
-				strcpy(msg, FALLBACK_CANT_READ);
+				strcpy_s(msg, sizeof(msg), FALLBACK_CANT_READ);
 			}
 		}
 
@@ -384,56 +384,56 @@ void UpdateList(HWND hDlg)
 	//	Add common floppy image extensions to the list view
 	//
 
-	if ((ret = GetAssociatedProgram(".bin", prog)) == ERROR_SUCCESS) {
-		AddItem(hList, ".bin", prog);
+	if ((ret = GetAssociatedProgram(".bin", prog, sizeof(prog))) == ERROR_SUCCESS) {
+		AddItem(hList, ".bin", prog, sizeof(prog));
 	}
 	else {
 		VFDTRACE(0,("UpdateList : GetAssociatedProgram(\".bin\") - %s",
 			GetSystemMessage(ret)));
 	}
 
-	if ((ret = GetAssociatedProgram(".dat", prog)) == ERROR_SUCCESS) {
-		AddItem(hList, ".dat", prog);
+	if ((ret = GetAssociatedProgram(".dat", prog, sizeof(prog))) == ERROR_SUCCESS) {
+		AddItem(hList, ".dat", prog, sizeof(prog));
 	}
 	else {
 		VFDTRACE(0,("UpdateList : GetAssociatedProgram(\".dat\") - %s",
 			GetSystemMessage(ret)));
 	}
 
-	if ((ret = GetAssociatedProgram(".fdd", prog)) == ERROR_SUCCESS) {
-		AddItem(hList, ".fdd", prog);
+	if ((ret = GetAssociatedProgram(".fdd", prog, sizeof(prog))) == ERROR_SUCCESS) {
+		AddItem(hList, ".fdd", prog, sizeof(prog));
 	}
 	else {
 		VFDTRACE(0,("UpdateList : GetAssociatedProgram(\".fdd\") - %s",
 			GetSystemMessage(ret)));
 	}
 
-	if ((ret = GetAssociatedProgram(".flp", prog)) == ERROR_SUCCESS) {
-		AddItem(hList, ".flp", prog);
+	if ((ret = GetAssociatedProgram(".flp", prog, sizeof(prog))) == ERROR_SUCCESS) {
+		AddItem(hList, ".flp", prog, sizeof(prog));
 	}
 	else {
 		VFDTRACE(0,("UpdateList : GetAssociatedProgram(\".flp\") - %s",
 			GetSystemMessage(ret)));
 	}
 
-	if ((ret = GetAssociatedProgram(".img", prog)) == ERROR_SUCCESS) {
-		AddItem(hList, ".img", prog);
+	if ((ret = GetAssociatedProgram(".img", prog, sizeof(prog))) == ERROR_SUCCESS) {
+		AddItem(hList, ".img", prog, sizeof(prog));
 	}
 	else {
 		VFDTRACE(0,("UpdateList : GetAssociatedProgram(\".img\") - %s",
 			GetSystemMessage(ret)));
 	}
 
-	if ((ret = GetAssociatedProgram(".ima", prog)) == ERROR_SUCCESS) {
-		AddItem(hList, ".ima", prog);
+	if ((ret = GetAssociatedProgram(".ima", prog, sizeof(prog))) == ERROR_SUCCESS) {
+		AddItem(hList, ".ima", prog, sizeof(prog));
 	}
 	else {
 		VFDTRACE(0,("UpdateList : GetAssociatedProgram(\".ima\") - %s",
 			GetSystemMessage(ret)));
 	}
 
-	if ((ret = GetAssociatedProgram(".vfd", prog)) == ERROR_SUCCESS) {
-		AddItem(hList, ".vfd", prog);
+	if ((ret = GetAssociatedProgram(".vfd", prog, sizeof(prog))) == ERROR_SUCCESS) {
+		AddItem(hList, ".vfd", prog, sizeof(prog));
 	}
 	else {
 		VFDTRACE(0,("UpdateList : GetAssociatedProgram(\".vfd\") - %s",
@@ -466,9 +466,9 @@ void UpdateList(HWND hDlg)
 
 		ext[size] = '\0';
 
-		if ((ret = GetAssociatedProgram(ext, prog)) == ERROR_SUCCESS) {
-			if (strnicmp(prog, pAppBase, strlen(pAppBase)) == 0) {
-				AddItem(hList, ext, prog);
+		if ((ret = GetAssociatedProgram(ext, prog, sizeof(prog))) == ERROR_SUCCESS) {
+			if (_strnicmp(prog, pAppBase, strlen(pAppBase)) == 0) {
+				AddItem(hList, ext, prog, sizeof(prog));
 			}
 		}
 		else {
@@ -489,7 +489,7 @@ void UpdateList(HWND hDlg)
 //
 //	Insert an item to the list constrol
 //
-int AddItem(HWND hList, char *ext, char *prog)
+int AddItem(HWND hList, char *ext, char *prog, size_t prog_size)
 {
 	LVITEM item;
 
@@ -512,18 +512,18 @@ int AddItem(HWND hList, char *ext, char *prog)
 			VFDTRACE(0,("AddItem : LoadString - %s",
 				GetSystemMessage(GetLastError())));
 
-			strcpy(prog, "(none)");
+			strcpy_s(prog, prog_size, "(none)");
 		}
 	}
 
 	//	select check status
 
-	if (strnicmp(prog, pAppBase, strlen(pAppBase)) == 0) {
+	if (_strnicmp(prog, pAppBase, strlen(pAppBase)) == 0) {
 		//	use checked icon
 		item.iImage = 1;
 
 		//	use full name if program is "vfdwin.exe"
-		strcpy(prog, VFD_PRODUCT_NAME);
+		strcpy_s(prog, prog_size, VFD_PRODUCT_NAME);
 	}
 
 	//	if registry is read-only, use grayed check icons
@@ -730,7 +730,7 @@ void OnNewClicked(HWND hDlg, HWND hBtn)
 	HWND hList;
 	char ext[MAX_PATH], prog[MAX_PATH];
 	LVITEM item;
-	DWORD ret;
+	INT_PTR ret;
 
 	if (!bRegWritable) {
 		return;
@@ -760,16 +760,16 @@ void OnNewClicked(HWND hDlg, HWND hBtn)
 
 	memset(&item, 0, sizeof(item));
 
-	ret = GetAssociatedProgram(ext[1] == '.' ? &ext[1] : ext, prog);
+	ret = GetAssociatedProgram(ext[1] == '.' ? &ext[1] : ext, prog, sizeof(prog));
 
 	if (ret != ERROR_SUCCESS) {
 		VFDTRACE(0,("OnListNotify : GetAssociatedProgram(\"%s\") - %s",
-			ext[1] == '.' ? &ext[1] : ext, GetSystemMessage(ret)));
+			ext[1] == '.' ? &ext[1] : ext, GetSystemMessage((DWORD)ret)));
 	}
 
 	//	Insert an item to the list control
 
-	item.iItem = AddItem(hList, ext[1] == '.' ? &ext[1] : ext, prog);
+	item.iItem = AddItem(hList, ext[1] == '.' ? &ext[1] : ext, prog, sizeof(prog));
 
 	if (item.iItem == -1) {
 		return;
@@ -961,8 +961,8 @@ void OnApplyClicked(HWND hDlg, HWND hBtn)
 			}
 		}
 
-		if ((ret = GetAssociatedProgram(ext, prog)) == ERROR_SUCCESS) {
-			AddItem(hList, ext, prog);
+		if ((ret = GetAssociatedProgram(ext, prog, sizeof(prog))) == ERROR_SUCCESS) {
+			AddItem(hList, ext, prog, sizeof(prog));
 		}
 		else {
 			VFDTRACE(0,("OnApplyClicked : GetAssociatedProgram(\"%s\") - %s",
@@ -989,7 +989,7 @@ void OnApplyClicked(HWND hDlg, HWND hBtn)
 //
 //	Add extension dialog procedure
 //
-BOOL CALLBACK AddExtProc(
+INT_PTR CALLBACK AddExtProc(
 	HWND hDlg,
 	UINT msg,
 	WPARAM wParam,

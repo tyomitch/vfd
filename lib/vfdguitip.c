@@ -38,7 +38,7 @@ static LRESULT CALLBACK ToolTipProc(
 	case WM_CREATE:
 		//	Store Font handle
 		SetWindowLongPtr(hWnd, GWLP_USERDATA,
-			(LONG)((LPCREATESTRUCT)lParam)->lpCreateParams);
+			(LONG_PTR)((LPCREATESTRUCT)lParam)->lpCreateParams);
 		return 0;
 
 	case WM_PAINT:
@@ -139,7 +139,7 @@ void WINAPI VfdToolTip(
 	LOGFONT			lf;
 	HFONT			font;
 	HDC				dc;
-	int				len;
+	size_t			len;
 	SIZE			sz;
 	RECT			rc;
 	int				scr_x;
@@ -176,14 +176,14 @@ void WINAPI VfdToolTip(
 
 	len = strlen(sText);
 
-	GetTextExtentPoint32(dc, sText, len, &sz);
+	GetTextExtentPoint32(dc, sText, (int)len, &sz);
 
 	rc.left		= 0;
 	rc.top		= 0;
 	rc.right	= sz.cx;
 	rc.bottom	= sz.cy;
 
-	DrawText(dc, sText, len, &rc, DT_CALCRECT | DT_LEFT | DT_TOP);
+	DrawText(dc, sText, (int)len, &rc, DT_CALCRECT | DT_LEFT | DT_TOP);
 
 	ReleaseDC(hParent, dc);
 
@@ -301,7 +301,7 @@ void WINAPI VfdImageTip(
 	}
 	else {
 		if (disk_type != VFD_DISKTYPE_FILE) {
-			strcpy(path, "<RAM>");
+			strcpy_s(path, sizeof(path), "<RAM>");
 		}
 		file_attr = 0;
 	}

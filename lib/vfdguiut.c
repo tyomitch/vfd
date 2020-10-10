@@ -41,7 +41,7 @@
 //
 //	local funcitons
 //
-static PSTR FormatSizeBytes(ULONG size, PSTR buf)
+static PSTR FormatSizeBytes(ULONG size, PSTR buf, size_t buf_size)
 {
 	ULONG comma = 1;
 	int len;
@@ -50,18 +50,18 @@ static PSTR FormatSizeBytes(ULONG size, PSTR buf)
 		comma *= 1000;
 	}
 
-	len = sprintf(buf, "%lu", size / comma);
+	len = sprintf_s(buf, buf_size, "%lu", size / comma);
 
 	while (comma > 1) {
 		size %= comma;
 		comma /= 1000;
-		len += sprintf(buf + len, ",%03lu", size / comma);
+		len += sprintf_s(buf + len, buf_size - len, ",%03lu", size / comma);
 	}
 
 	return buf;
 }
 
-static PSTR FormatSizeUnits(ULONG size, PSTR buf)
+static PSTR FormatSizeUnits(ULONG size, PSTR buf, size_t buf_size)
 {
 	static const char *name[3] = {
 		" KB", " MB", " GB"
@@ -70,7 +70,7 @@ static PSTR FormatSizeUnits(ULONG size, PSTR buf)
 	double dsize;
 
 	if (size < 1000) {
-		sprintf(buf, "%u", size);
+		sprintf_s(buf, buf_size, "%u", size);
 		return buf;
 	}
 
@@ -84,17 +84,17 @@ static PSTR FormatSizeUnits(ULONG size, PSTR buf)
 	}
 
 	if (dsize < 10) {
-		sprintf(buf, "%3.2f%s", dsize, name[unit]);
+		sprintf_s(buf, buf_size, "%3.2f%s", dsize, name[unit]);
 	}
 	else if (dsize < 100) {
-		sprintf(buf, "%3.1f%s", dsize, name[unit]);
+		sprintf_s(buf, buf_size, "%3.1f%s", dsize, name[unit]);
 	}
 	else if (dsize < 1000) {
-		sprintf(buf, "%3.0f%s", dsize, name[unit]);
+		sprintf_s(buf, buf_size, "%3.0f%s", dsize, name[unit]);
 	}
 	else {
-		FormatSizeBytes((ULONG)dsize, buf);
-		strcat(buf, name[unit]);
+		FormatSizeBytes((ULONG)dsize, buf, buf_size);
+		strcat_s(buf, buf_size, name[unit]);
 	}
 
 	return buf;
@@ -105,7 +105,7 @@ static PSTR FormatSizeUnits(ULONG size, PSTR buf)
 //
 DWORD WINAPI VfdGuiClose(
 	HWND			hParent,	//	parent window
-	ULONG			nDevice)	//	device number
+	LONG_PTR		nDevice)	//	device number
 {
 	HANDLE			hDevice;
 	SAVE_PARAM		param;
@@ -192,8 +192,7 @@ DWORD WINAPI VfdGuiClose(
 			break;
 		}
 
-		if (IS_WINDOWS_NT()) {
-
+#if 0
 			//	Windows NT -- cannot force close
 			//	show retry / cancel message box
 
@@ -206,9 +205,7 @@ DWORD WINAPI VfdGuiClose(
 			if (msg) {
 				LocalFree(msg);
 			}
-		}
-		else {
-
+#else
 			//	Windows 2000 and later -- possible to force
 			//	show cancel / retry / continue message box
 
@@ -228,7 +225,7 @@ DWORD WINAPI VfdGuiClose(
 
 				ret = VfdCloseImage(hDevice, TRUE);
 			}
-		}
+#endif
 
 		if (reply == IDCANCEL) {
 			ret = ERROR_CANCELLED;
@@ -253,7 +250,7 @@ DWORD WINAPI VfdGuiClose(
 //
 DWORD WINAPI VfdGuiFormat(
 	HWND			hParent,	//	parent window
-	ULONG			nDevice)	//	device number
+	LONG_PTR		nDevice)	//	device number
 {
 	HANDLE			hDevice;
 	ULONG			ret;
@@ -292,7 +289,6 @@ retry:
 		ret = VfdDismountVolume(hDevice, FALSE);
 
 		if (ret == ERROR_ACCESS_DENIED) {
-			PSTR msg;
 			int reply;
 
 			SetCursor(original);
@@ -399,8 +395,8 @@ void WINAPI VfdMakeFileDesc(
 	else {
 		CHAR buf[20], buf2[20];
 		size_str = ModuleMessage(MSG_DESC_FILESIZE, 
-			FormatSizeBytes(nFileSize, buf),
-			FormatSizeUnits(nFileSize, buf2));
+			FormatSizeBytes(nFileSize, buf, sizeof(buf)),
+			FormatSizeUnits(nFileSize, buf2, sizeof(buf2)));
 	}
 
 	attr_ro = NULL;
@@ -421,7 +417,7 @@ void WINAPI VfdMakeFileDesc(
 		}
 	}
 
-	_snprintf(pBuffer, nBufSize - 1, "%s %s %s %s %s",
+	sprintf_s(pBuffer, nBufSize, "%s %s %s %s %s",
 		type_str ? type_str : "",
 		size_str ? size_str : "",
 		attr_ro  ? attr_ro	: "",

@@ -27,7 +27,7 @@
 //
 //	local functions
 //
-static INT CALLBACK SaveDialogProc(
+static INT_PTR CALLBACK SaveDialogProc(
 	HWND			hDlg,
 	UINT			uMsg,
 	WPARAM			wParam,
@@ -45,7 +45,7 @@ static DWORD OnOK(HWND hDlg);
 //
 DWORD WINAPI VfdGuiSave(
 	HWND			hParent,
-	ULONG			nDevice)
+	LONG_PTR		nDevice)
 {
 	SAVE_PARAM		param;
 	CHAR			path[MAX_PATH];
@@ -111,7 +111,7 @@ DWORD GuiSaveParam(
 //
 // The dialog procedure
 //
-INT CALLBACK SaveDialogProc(
+INT_PTR CALLBACK SaveDialogProc(
 	HWND			hDlg,
 	UINT			uMsg,
 	WPARAM			wParam,
@@ -179,7 +179,7 @@ void OnInit(
 {
 	//	Store parameters
 
-	SetWindowLongPtr(hDlg, GWLP_USERDATA, (ULONG)pParam);
+	SetWindowLongPtr(hDlg, GWLP_USERDATA, (LONG_PTR)pParam);
 
 	//	clear the target existence flag
 
@@ -270,7 +270,7 @@ void OnTarget(
 		//	convert into a full path
 
 		if (GetFullPathName(buf, sizeof(full), full, &file)) {
-			strcpy(buf, full);
+			strcpy_s(buf, sizeof(buf), full);
 		}
 	}
 
@@ -392,13 +392,12 @@ void OnBrowse(
 	len = GetDlgItemText(hDlg, IDC_TARGETFILE, file, sizeof(file));
 
 	if (len && file[len - 1] == '\\') {
-		strcpy(dir, file);
+		strcpy_s(dir, sizeof(dir), file);
 		ZeroMemory(file, sizeof(file));
 	}
 
 	// Different structure sizes must be used for NT and 2K/XP
-	ofn.lStructSize = IS_WINDOWS_NT() ?
-		OPENFILENAME_SIZE_VERSION_400 : sizeof(ofn);
+	ofn.lStructSize = sizeof(ofn);
 
 	ofn.hwndOwner	= hDlg;
 	ofn.lpstrFile	= file;

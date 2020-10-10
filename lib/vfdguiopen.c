@@ -39,13 +39,13 @@
 //
 //	local functions
 //
-static INT CALLBACK OpenDialogProc(
+static INT_PTR CALLBACK OpenDialogProc(
 	HWND			hDlg,
 	UINT			uMsg,
 	WPARAM			wParam,
 	LPARAM			lParam);
 
-static void OnInit(HWND hDlg, ULONG nDevice);
+static void OnInit(HWND hDlg, ULONG_PTR nDevice);
 static void OnImage(HWND hDlg, HWND hEdit);
 static void OnBrowse(HWND hDlg);
 static void OnDiskType(HWND hDlg, HWND hRadio);
@@ -58,7 +58,7 @@ static DWORD OnOK(HWND hDlg);
 //
 DWORD WINAPI VfdGuiOpen(
 	HWND			hParent,
-	ULONG			nDevice)
+	LONG_PTR		nDevice)
 {
 	switch (DialogBoxParam(
 		g_hDllModule,
@@ -81,7 +81,7 @@ DWORD WINAPI VfdGuiOpen(
 //
 // Open image dialog procedure
 //
-INT CALLBACK OpenDialogProc(
+INT_PTR CALLBACK OpenDialogProc(
 	HWND			hDlg,
 	UINT			uMsg,
 	WPARAM			wParam,
@@ -150,7 +150,7 @@ INT CALLBACK OpenDialogProc(
 //
 void OnInit(
 	HWND			hDlg,
-	ULONG			nDevice)
+	ULONG_PTR		nDevice)
 {
 	VFD_MEDIA i;
 
@@ -371,7 +371,7 @@ void OnBrowse(
 	len = GetDlgItemText(hDlg, IDC_IMAGEFILE, file, sizeof(file));
 
 	if (len && file[len - 1] == '\\') {
-		strcpy(dir, file);
+		strcpy_s(dir, sizeof(dir), file);
 		ZeroMemory(file, sizeof(file));
 	}
 
@@ -379,8 +379,7 @@ void OnBrowse(
 
 	ZeroMemory(&ofn, sizeof(ofn));
 
-	ofn.lStructSize = IS_WINDOWS_NT() ?
-		OPENFILENAME_SIZE_VERSION_400 : sizeof(ofn);
+	ofn.lStructSize = sizeof(ofn);
 
 	ofn.hwndOwner	= hDlg;
 	ofn.lpstrFilter = filter ? filter : FALLBACK_IMAGE_FILTER;
@@ -428,7 +427,7 @@ void OnMediaType(
 {
 	VFD_MEDIA		media_type;
 	ULONG			media_size;
-	ULONG			image_size;
+	ULONG_PTR		image_size;
 
 	image_size = GetWindowLongPtr(hDlg, DWLP_USER);
 

@@ -81,9 +81,11 @@ STDAPI DllCanUnloadNow(void)
 // Shell extension register functions
 //=====================================
 
+#define GUID_SIZE 40
+
 static inline void MakeGuidString(LPTSTR str, const GUID &guid)
 {
-	sprintf(str, "{%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
+	sprintf_s(str, GUID_SIZE, "{%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
 		guid.Data1, guid.Data2, guid.Data3,
 		guid.Data4[0], guid.Data4[1],
 		guid.Data4[2], guid.Data4[3], guid.Data4[4],
@@ -96,7 +98,7 @@ static inline void MakeGuidString(LPTSTR str, const GUID &guid)
 DWORD WINAPI VfdRegisterHandlers()
 {
 	TCHAR	buf[MAX_PATH];
-	TCHAR	guid_str[40];
+	TCHAR	guid_str[GUID_SIZE];
 	HKEY	hKey;
 	DWORD	temp;
 	DWORD	ret;
@@ -106,7 +108,7 @@ DWORD WINAPI VfdRegisterHandlers()
 	//
 	//	Register the GUID in the CLSID subtree
 	//
-	sprintf(buf, "CLSID\\%s", guid_str);
+	sprintf_s(buf, sizeof(buf), "CLSID\\%s", guid_str);
 
 	VFDTRACE(0, ("HKCR\\%s\n", buf));
 
@@ -151,7 +153,7 @@ DWORD WINAPI VfdRegisterHandlers()
 	//
 	//	Register the executable path
 	//
-	sprintf(buf, "CLSID\\%s\\InProcServer32", guid_str);
+	sprintf_s(buf, sizeof(buf), "CLSID\\%s\\InProcServer32", guid_str);
 
 	VFDTRACE(0, ("HKCR\\%s\n", buf));
 
@@ -202,7 +204,7 @@ DWORD WINAPI VfdRegisterHandlers()
 	VFDTRACE(0, ("@=%s\n", guid_str));
 
 	ret = RegSetValueEx(hKey, NULL, NULL, REG_SZ,
-		(PBYTE)guid_str, strlen(guid_str) + 1);
+		(PBYTE)guid_str, (DWORD)(strlen(guid_str) + 1));
 
 	RegCloseKey(hKey);
 
@@ -213,10 +215,7 @@ DWORD WINAPI VfdRegisterHandlers()
 	//
 	//	Register Drag&Drop handler
 	//
-	if (!IS_WINDOWS_NT()) {
-		//
-		//	Windows NT does not support Drag&Drop handlers ???
-		//
+
 		VFDTRACE(0, ("HKCR\\" VFDEXT_DND_REGKEY "\n"));
 
 		ret = RegCreateKeyEx(
@@ -230,14 +229,13 @@ DWORD WINAPI VfdRegisterHandlers()
 		VFDTRACE(0, ("@=%s\n", guid_str));
 
 		ret = RegSetValueEx(hKey, NULL, NULL, REG_SZ,
-			(PBYTE)guid_str, strlen(guid_str) + 1);
+			(PBYTE)guid_str, (DWORD)(strlen(guid_str) + 1));
 
 		RegCloseKey(hKey);
 
 		if (ret != ERROR_SUCCESS) {
 			return ret;
 		}
-	}
 
 	//
 	//	Register property sheet handler
@@ -255,7 +253,7 @@ DWORD WINAPI VfdRegisterHandlers()
 	VFDTRACE(0, ("@=%s\n", guid_str));
 
 	ret = RegSetValueEx(hKey, NULL, NULL, REG_SZ,
-		(PBYTE)guid_str, strlen(guid_str) + 1);
+		(PBYTE)guid_str, DWORD(strlen(guid_str) + 1));
 
 	RegCloseKey(hKey);
 
@@ -293,14 +291,14 @@ DWORD WINAPI VfdRegisterHandlers()
 DWORD WINAPI VfdUnregisterHandlers()
 {
 	TCHAR	buf[MAX_PATH];
-	TCHAR	guid_str[40];
+	TCHAR	guid_str[GUID_SIZE];
 	HKEY	hKey;
 	DWORD	temp;
 	DWORD	ret;
 
 	MakeGuidString(guid_str, CLSID_VfdShellExt);
 
-	sprintf(buf, "CLSID\\%s", guid_str);
+	sprintf_s(buf, sizeof(buf), "CLSID\\%s", guid_str);
 
 	VFDTRACE(0, ("HKCR\\%s\n", buf));
 
@@ -316,7 +314,7 @@ DWORD WINAPI VfdUnregisterHandlers()
 		return ERROR_PATH_NOT_FOUND;
 	}
 
-	sprintf(buf, "CLSID\\%s\\InProcServer32", guid_str);
+	sprintf_s(buf, sizeof(buf), "CLSID\\%s\\InProcServer32", guid_str);
 
 	VFDTRACE(0, ("HKCR\\%s\n", buf));
 
@@ -326,7 +324,7 @@ DWORD WINAPI VfdUnregisterHandlers()
 		return ret;
 	}
 
-	sprintf(buf, "CLSID\\%s", guid_str);
+	sprintf_s(buf, sizeof(buf), "CLSID\\%s", guid_str);
 
 	VFDTRACE(0, ("HKCR\\%s\n", buf));
 
@@ -344,10 +342,6 @@ DWORD WINAPI VfdUnregisterHandlers()
 		return ret;
 	}
 
-	if (!IS_WINDOWS_NT()) {
-
-		//	Windows NT doesn't support Drag & Drop handlers ???
-
 		VFDTRACE(0, ("HKCR\\" VFDEXT_DND_REGKEY "\n"));
 
 		ret = RegDeleteKey(HKEY_CLASSES_ROOT, VFDEXT_DND_REGKEY);
@@ -355,7 +349,6 @@ DWORD WINAPI VfdUnregisterHandlers()
 		if (ret != ERROR_SUCCESS) {
 			return ret;
 		}
-	}
 
 	VFDTRACE(0, ("HKCR\\" VFDEXT_PROP_REGKEY "\n"));
 
@@ -389,13 +382,13 @@ DWORD WINAPI VfdUnregisterHandlers()
 DWORD WINAPI VfdCheckHandlers()
 {
 	TCHAR	buf[MAX_PATH];
-	TCHAR	guid_str[40];
+	TCHAR	guid_str[GUID_SIZE];
 	DWORD	temp;
 	DWORD	ret;
 
 	MakeGuidString(guid_str, CLSID_VfdShellExt);
 
-	sprintf(buf, "CLSID\\%s", guid_str);
+	sprintf_s(buf, sizeof(buf), "CLSID\\%s", guid_str);
 
 	VFDTRACE(0, ("HKCR\\%s\n", buf));
 

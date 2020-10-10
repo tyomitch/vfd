@@ -42,7 +42,7 @@ typedef struct _GET_LENGTH_INFORMATION {
 //
 //	DOS device name (\\.\VirtualFD)
 //
-#define VFD_DEVICE_TEMPLATE		"\\\\.\\" VFD_DEVICE_BASENAME "%u"
+#define VFD_DEVICE_TEMPLATE		"\\\\.\\" VFD_DEVICE_BASENAME "%Iu"
 #define VFD_VOLUME_TEMPLATE		"\\\\.\\%c:"
 
 #define VFD_INSTALL_DIRECTORY	"\\system32\\drivers\\"
@@ -238,7 +238,7 @@ DWORD WINAPI VfdInstallDriver(
 #endif	//	VFD_EMBED_DRIVER
 	CHAR			system_dir[MAX_PATH];
 	PSTR			inst_path;
-	DWORD			len;
+	size_t			len;
 	DWORD			ret = ERROR_SUCCESS;
 
 	//	get SystemRoot directory path
@@ -297,7 +297,7 @@ DWORD WINAPI VfdInstallDriver(
 		//	supply the file name (vfd.sys)
 
 		file_name = &file_path[len];
-		strcpy(file_name, VFD_DRIVER_FILENAME);
+		strcpy_s(file_name, sizeof(file_path) - len, VFD_DRIVER_FILENAME);
 	}
 	else {
 
@@ -324,7 +324,7 @@ DWORD WINAPI VfdInstallDriver(
 			//	supply the file name (vfd.sys)
 
 			file_name = &file_path[len];
-			strcpy(file_name++, "\\" VFD_DRIVER_FILENAME);
+			strcpy_s(file_name++, sizeof(file_path) - len, "\\" VFD_DRIVER_FILENAME);
 		}
 	}
 
@@ -533,7 +533,7 @@ DWORD WINAPI VfdRemoveDriver()
 
 	//	Get the current driver path
 
-	ret = VfdGetDriverConfig(file_path, NULL);
+	ret = VfdGetDriverConfig(file_path, sizeof(file_path), NULL);
 
 	if (ret != ERROR_SUCCESS) {
 		return ret;
@@ -926,6 +926,7 @@ cleanup:
 //
 DWORD WINAPI VfdGetDriverConfig(
 	PSTR			sFileName,
+	size_t			ncFileName,
 	PDWORD			pStart)
 {
 #undef	FUNC
@@ -937,7 +938,7 @@ DWORD WINAPI VfdGetDriverConfig(
 	DWORD			ret = ERROR_SUCCESS;
 
 	if (sFileName) {
-		ZeroMemory(sFileName, MAX_PATH);
+		ZeroMemory(sFileName, ncFileName);
 	}
 
 	if (pStart) {
@@ -1023,28 +1024,26 @@ DWORD WINAPI VfdGetDriverConfig(
 		if (strncmp(config->lpBinaryPathName, "\\??\\", 4) == 0) {
 
 			//	driver path is an absolute UNC path
-			strncpy(
-				sFileName,
-				config->lpBinaryPathName + 4,
-				MAX_PATH);
+			strcpy_s(
+				sFileName, ncFileName,
+				config->lpBinaryPathName + 4);
 		}
 		else if (config->lpBinaryPathName[0] == '\\' ||
 			(isalpha(config->lpBinaryPathName[0]) &&
 			config->lpBinaryPathName[1] == ':')) {
 
 			//	driver path is an absolute path
-			strncpy(sFileName,
-				config->lpBinaryPathName,
-				MAX_PATH);
+			strcpy_s(sFileName, ncFileName,
+				config->lpBinaryPathName);
 		}
 		else {
 			//	driver path is relative to the SystemRoot
 //			DWORD len = GetEnvironmentVariable(
 //				"SystemRoot", sFileName, MAX_PATH);
 
-			DWORD len = GetWindowsDirectory(sFileName, MAX_PATH);
+			DWORD len = GetWindowsDirectory(sFileName, (UINT)ncFileName);
 
-			if (len == 0 || len > MAX_PATH) {
+			if (len == 0 || len > ncFileName) {
 				VFDTRACE(0,
 					(FUNC ": %%SystemRoot%% is empty or too long.\n"));
 
@@ -1052,7 +1051,7 @@ DWORD WINAPI VfdGetDriverConfig(
 				goto cleanup;
 			}
 
-			sprintf((sFileName + len), "\\%s",
+			sprintf_s((sFileName + len), ncFileName - len, "\\%s",
 				config->lpBinaryPathName);
 		}
 	}
@@ -1181,7 +1180,7 @@ cleanup:
 //	dialog when the drive is empty.
 //
 HANDLE WINAPI VfdOpenDevice(
-	ULONG			nTarget)		// either a drive letter or a device number
+	ULONG_PTR		nTarget)		// either a drive letter or a device number
 {
 #undef	FUNC
 #define FUNC		"VfdOpenDevice"
@@ -1191,20 +1190,20 @@ HANDLE WINAPI VfdOpenDevice(
 
 	//	format a device name string
 
-	if (isalpha(nTarget)) {
+	if (nTarget <= 255 && isalpha((unsigned char)nTarget)) {
 		//	nTarget is a drive letter
 		//	\\.\<x>:
-		sprintf(dev_name, VFD_VOLUME_TEMPLATE, nTarget);
+		sprintf_s(dev_name, sizeof(dev_name), VFD_VOLUME_TEMPLATE, (unsigned char)nTarget);
 	}
-	else if (isdigit(nTarget)) {
+	else if (nTarget <= 255 && isdigit((unsigned char)nTarget)) {
 		//	nTarget is a device number in character
 		//	\\.\VirtualFD<n>
-		sprintf(dev_name, VFD_DEVICE_TEMPLATE, nTarget - '0');
+		sprintf_s(dev_name, sizeof(dev_name), VFD_DEVICE_TEMPLATE, nTarget - '0');
 	}
 	else {
 		//	nTarget is a device number value
 		//	\\.\VirtualFD<n>
-		sprintf(dev_name, VFD_DEVICE_TEMPLATE, nTarget);
+		sprintf_s(dev_name, sizeof(dev_name), VFD_DEVICE_TEMPLATE, nTarget);
 	}
 
 	// change error mode in order to avoid "Insert Floppy" dialog
@@ -1273,7 +1272,7 @@ DWORD WINAPI VfdOpenImage(
 #define FUNC		"VfdOpenImage"
 	PCSTR			prefix;
 	CHAR			abspath[MAX_PATH];
-	DWORD			name_len;
+	size_t			name_len;
 	DWORD			result;
 	DWORD			ret = ERROR_SUCCESS;
 
@@ -1530,7 +1529,7 @@ DWORD WINAPI VfdOpenImage(
 		sizeof(VFD_IMAGE_INFO) + name_len + 1);
 
 	if (name_len) {
-		sprintf(image_info->FileName,
+		sprintf_s(image_info->FileName, name_len+1,
 			"%s%s", prefix, sFileName);
 	}
 
@@ -1563,7 +1562,7 @@ DWORD WINAPI VfdOpenImage(
 		hDevice,
 		IOCTL_VFD_OPEN_IMAGE,
 		image_info,
-		sizeof(VFD_IMAGE_INFO) + name_len,
+		(DWORD)(sizeof(VFD_IMAGE_INFO) + name_len),
 		NULL,
 		0,
 		&result,
@@ -1869,13 +1868,13 @@ DWORD WINAPI VfdGetImageInfo(
 
 		if (strncmp(image_info->FileName, "\\??\\UNC", 7) == 0) {
 			*sFileName = '\\';
-			strcpy(sFileName + 1, image_info->FileName + 7);
+			strcpy_s(sFileName + 1, MAX_PATH - 1, image_info->FileName + 7);
 		}
 		else if (strncmp(image_info->FileName, "\\??\\", 4) == 0) {
-			strcpy(sFileName, image_info->FileName + 4);
+			strcpy_s(sFileName, MAX_PATH, image_info->FileName + 4);
 		}
 		else {
-			strcpy(sFileName, image_info->FileName);
+			strcpy_s(sFileName, MAX_PATH, image_info->FileName);
 		}
 	}
 
@@ -2287,7 +2286,7 @@ DWORD WINAPI VfdGetLocalLink(
 
 	//	start searching from the next drive letter
 
-	if (isalpha(*pLetter)) {
+	if (*pLetter > 0 && isalpha(*pLetter)) {
 		dos_name[0] = (CHAR)(toupper(*pLetter) + 1);
 		logical >>= (dos_name[0] - 'A');
 	}

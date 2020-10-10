@@ -230,11 +230,11 @@ void OnControl(
 		}
 	}
 
-	strcpy(file_name, "vfdwin.exe");
+	strcpy_s(file_name, sizeof(full_path) - (file_name - full_path), "vfdwin.exe");
 
 	VFDTRACE(0, ("Starting %s\n", full_path));
 
-	ret = (DWORD)ShellExecute(
+	ret = (DWORD)(INT_PTR)ShellExecute(
 		hDlg, NULL, full_path, NULL, NULL, SW_SHOW);
 
 	if (ret > 32) {
@@ -326,7 +326,7 @@ void UpdateImageInfo(
 	}
 	else {
 		if (disk_type != VFD_DISKTYPE_FILE) {
-			strcpy(buf, "<RAM>");
+			strcpy_s(buf, sizeof(buf), "<RAM>");
 		}
 		attrib = 0;
 	}

@@ -170,7 +170,7 @@ void OnInitDialog(HWND hDlg)
 	//	prepare default driver path
 
 	memcpy(buf, sAppPath, pAppBase - sAppPath);
-	strcpy(&buf[pAppBase - sAppPath], VFD_DRIVER_FILENAME);
+	strcpy_s(&buf[pAppBase - sAppPath], sizeof(buf) - (pAppBase - sAppPath), VFD_DRIVER_FILENAME);
 
 	SetDlgItemText(hDlg, IDC_DRIVER_PATH, buf);
 
@@ -202,7 +202,7 @@ void OnPathChanged(HWND hDlg, HWND hEdit)
 		ret = VfdCheckDriverFile(buf, &version);
 
 		if (version) {
-			len = sprintf(buf, "%u.%u%s",
+			len = sprintf_s(buf, sizeof(buf), "%u.%u%s",
 				HIWORD(version) & 0x7fff,
 				LOWORD(version),
 				(version & 0x80000000) ? " (debug)" : "");
@@ -212,7 +212,7 @@ void OnPathChanged(HWND hDlg, HWND hEdit)
 			valid = TRUE;
 		}
 		else {
-			len += sprintf(buf + len, " [%s", GetSystemMessage(ret));
+			len += sprintf_s(buf + len, sizeof(buf) - len, " [%s", GetSystemMessage(ret));
 
 			while (buf[len - 1] == '\r' || buf[len - 1] == '\n') {
 				buf[--len] = '\0';
@@ -274,7 +274,7 @@ void OnBrowseClicked(HWND hDlg)
 		VFDTRACE(0,("OnBrowseClicked : LoadString - %s",
 			GetSystemMessage(GetLastError())));
 
-		strcpy(title, FALLBACK_DRIVER_TITLE);
+		strcpy_s(title, sizeof(title), FALLBACK_DRIVER_TITLE);
 	}
 
 	//	prepare OPENFILENAME structure
@@ -282,8 +282,7 @@ void OnBrowseClicked(HWND hDlg)
 	memset(&ofn, 0, sizeof(ofn));
 
 	// Different structure sizes must be used for NT and 2K/XP
-	ofn.lStructSize = IS_WINDOWS_NT() ?
-		OPENFILENAME_SIZE_VERSION_400 : sizeof(ofn);
+	ofn.lStructSize = sizeof(ofn);
 
 	ofn.hwndOwner	= hDlg;
 	ofn.lpstrFilter = filter;
@@ -368,7 +367,7 @@ void OnStartChanged(HWND hDlg)
 	DWORD	start_old;
 	DWORD	start_new;
 
-	if (VfdGetDriverConfig(NULL, &start_old) != ERROR_SUCCESS) {
+	if (VfdGetDriverConfig(NULL, 0, &start_old) != ERROR_SUCCESS) {
 		//	driver is not installed - do not use the Apply button
 		return;
 	}
@@ -376,17 +375,14 @@ void OnStartChanged(HWND hDlg)
 	//	driver is already installed - enable the Apply button
 
 	if (IsDlgButtonChecked(hDlg, IDC_START_AUTO) == BST_CHECKED) {
-		if (IS_WINDOWS_NT()) {
-
+#if 0
 			//	On Windows NT, SYSTEM start drivers must be placed
 			//	under the winnt\system32 directory.  Since I don't
 			//	care to handle driver file copying, I use the AUTO
 			//	start method for Windows NT.
 
 			start_new = SERVICE_AUTO_START;
-		}
-		else {
-
+#else
 			//	On Windows XP, the VFD driver must be running when
 			//	the shell starts -- otherwise the shell doesn't
 			//	recognize the VFD drives.  Since Windows XP allows
@@ -401,7 +397,7 @@ void OnStartChanged(HWND hDlg)
 
 //			start_new = SERVICE_SYSTEM_START;
 			start_new = SERVICE_AUTO_START;
-		}
+#endif
 	}
 	else {
 		start_new = SERVICE_DEMAND_START;
@@ -484,7 +480,7 @@ void OnRefreshDialog(HWND hDlg)
 
 		//	get driver configuration
 
-		ret = VfdGetDriverConfig(path, &start_type);
+		ret = VfdGetDriverConfig(path, sizeof(path), &start_type);
 
 		if (ret == ERROR_SUCCESS) {
 
@@ -595,17 +591,14 @@ BOOL InstallDriver(HWND hDlg)
 	//	get start type
 
 	if (IsDlgButtonChecked(hDlg, IDC_START_AUTO) == BST_CHECKED) {
-		if (IS_WINDOWS_NT()) {
-
+#if 0
 			//	On Windows NT, SYSTEM start drivers must be placed
 			//	under the winnt\system32 directory.  Since I don't
 			//	care to handle driver file copying, I use the AUTO
 			//	start method for Windows NT.
 
 			start_type = SERVICE_AUTO_START;
-		}
-		else {
-
+#else
 			//	On Windows XP, the VFD driver must be running when
 			//	the shell starts -- otherwise the shell doesn't
 			//	recognize the VFD drives.  Since Windows XP allows
@@ -620,7 +613,7 @@ BOOL InstallDriver(HWND hDlg)
 
 //			start_type = SERVICE_SYSTEM_START;
 			start_type = SERVICE_AUTO_START;
-		}
+#endif
 	}
 	else {
 		start_type = SERVICE_DEMAND_START;
@@ -796,17 +789,14 @@ BOOL ConfigDriver(HWND hDlg)
 	//	get start type
 
 	if (IsDlgButtonChecked(hDlg, IDC_START_AUTO) == BST_CHECKED) {
-		if (IS_WINDOWS_NT()) {
-
+#if 0
 			//	On Windows NT, SYSTEM start drivers must be placed
 			//	under the winnt\system32 directory.  Since I don't
 			//	care to handle driver file copying, I use the AUTO
 			//	start method for Windows NT.
 
 			start_type = SERVICE_AUTO_START;
-		}
-		else {
-
+#else
 			//	On Windows XP, the VFD driver must be running when
 			//	the shell starts -- otherwise the shell doesn't
 			//	recognize the VFD drives.  Since Windows XP allows
@@ -821,7 +811,7 @@ BOOL ConfigDriver(HWND hDlg)
 
 //			start_type = SERVICE_SYSTEM_START;
 			start_type = SERVICE_AUTO_START;
-		}
+#endif
 	}
 	else {
 		start_type = SERVICE_DEMAND_START;
