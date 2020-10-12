@@ -405,7 +405,6 @@ STDMETHODIMP CVfdShExt::InvokeCommand(
 	case VFD_CMD_PROP:
 		{
 			SHOBJECTPROPERTIES pSHObjectProperties;
-			WCHAR path[4] = L" :\\";
 
 			pSHObjectProperties = (SHOBJECTPROPERTIES)GetProcAddress(
 				LoadLibrary("shell32"), "SHObjectProperties");
@@ -416,6 +415,7 @@ STDMETHODIMP CVfdShExt::InvokeCommand(
 			}
 
 			if (pSHObjectProperties) {
+				WCHAR path[4] = L" :\\";
 				path[0] = m_sTarget[0];
 
 				pSHObjectProperties(lpcmi->hwnd,

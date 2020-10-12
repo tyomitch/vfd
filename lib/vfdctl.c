@@ -88,7 +88,7 @@ static void VfdBroadcastLink(
 	params.dbcv_flags		= 0;
 
 	if (BroadcastSystemMessage(
-		BSF_NOHANG | BSF_FORCEIFHUNG | BSF_NOTIMEOUTIFNOTHUNG,
+		BSF_NOHANG | BSF_FORCEIFHUNG,
 		&receipients,
 		WM_DEVICECHANGE,
 		device_event,
@@ -506,9 +506,7 @@ cleanup:
 
 	//	Close handle to the service control manager.
 
-	if (hScManager) {
 		CloseServiceHandle(hScManager);
-	}
 
 	//	Broadcast the successful operation
 
@@ -591,9 +589,7 @@ cleanup:
 
 	//	Close handle to the service control manager.
 
-	if (hScManager) {
 		CloseServiceHandle(hScManager);
-	}
 
 	//	Broadcast the successful operation
 
@@ -752,9 +748,7 @@ cleanup:
 
 	//	Close handle to the service control manager.
 
-	if (hScManager) {
 		CloseServiceHandle(hScManager);
-	}
 
 	//	revert to the original cursor
 
@@ -904,9 +898,7 @@ cleanup:
 
 	//	Close handle to the service control manager.
 
-	if (hScManager) {
 		CloseServiceHandle(hScManager);
-	}
 
 	//	Broadcast the successful operation
 
@@ -1075,9 +1067,7 @@ cleanup:
 
 	//	Close handle to the service control manager.
 
-	if (hScManager) {
 		CloseServiceHandle(hScManager);
-	}
 
 	return ret;
 }
@@ -1090,7 +1080,7 @@ DWORD WINAPI VfdGetDriverState(
 {
 #undef	FUNC
 #define FUNC		"VfdGetDriverState"
-	SC_HANDLE		hScManager = NULL;	// Service Control Manager
+	SC_HANDLE		hScManager;	// Service Control Manager
 	SC_HANDLE		hService = NULL;	// Service (= Driver)
 	SERVICE_STATUS	status;
 	DWORD			ret = ERROR_SUCCESS;
@@ -1168,9 +1158,7 @@ cleanup:
 
 	//	Close handle to the service control manager.
 
-	if (hScManager) {
 		CloseServiceHandle(hScManager);
-	}
 
 	return ret;
 }
@@ -1274,7 +1262,7 @@ DWORD WINAPI VfdOpenImage(
 	CHAR			abspath[MAX_PATH];
 	size_t			name_len;
 	DWORD			result;
-	DWORD			ret = ERROR_SUCCESS;
+	DWORD			ret;
 
 	PVFD_IMAGE_INFO	image_info = NULL;
 	PUCHAR			image_buf = NULL;
@@ -1627,7 +1615,7 @@ DWORD WINAPI VfdOpenImage(
 
 	//	Broadcast the successful operation
 
-	if (ret == ERROR_SUCCESS) {
+	ret = ERROR_SUCCESS;
 		ULONG	number;
 		CHAR	root[] = "A:\\";
 
@@ -1645,7 +1633,6 @@ DWORD WINAPI VfdOpenImage(
 			isalpha(root[0])) {
 			SHChangeNotify(SHCNE_MEDIAINSERTED, SHCNF_PATH, root, NULL);
 		}
-	}
 
 exit_func:
 	if (image_info) {
@@ -1669,7 +1656,7 @@ DWORD WINAPI VfdCloseImage(
 #undef	FUNC
 #define FUNC		"VfdCloseImage"
 	DWORD			result;
-	DWORD			ret = ERROR_SUCCESS;
+	DWORD			ret;
 	int				retry = 0;
 
 lock_retry:
@@ -1724,8 +1711,6 @@ lock_retry:
 			goto lock_retry;
 		}
 	}
-
-	ret = ERROR_SUCCESS;
 
 	if (!DeviceIoControl(
 		hDevice,
@@ -1785,15 +1770,13 @@ lock_retry:
 	}
 
 	//	Broadcast the successful operation
-	if (ret == ERROR_SUCCESS) {
 		ULONG	number;
 
 		if (VfdGetDeviceNumber(hDevice, &number) == ERROR_SUCCESS) {
 			VfdNotify(VFD_OPERATION_CLOSE, number);
 		}
-	}
 
-	return ret;
+	return ERROR_SUCCESS;
 }
 
 //
@@ -1899,9 +1882,7 @@ DWORD WINAPI VfdGetImageInfo(
 	}
 
 cleanup:
-	if (image_info) {
 		LocalFree(image_info);
-	}
 
 	return ret;
 }
@@ -2893,8 +2874,6 @@ DWORD WINAPI VfdCheckDriverFile(
 
 		goto cleanup;
 	}
-
-	result = sizeof(fixedinfo);
 
 	if (!VerQueryValue(info, "\\", (PVOID *)&fixedinfo, (PUINT)&result)) {
 		ret = GetLastError();

@@ -11,6 +11,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <shlobj.h>
+#include <new>
 
 #include "vfdtypes.h"
 #include "vfdlib.h"
@@ -107,9 +108,11 @@ STDMETHODIMP CVfdFactory::CreateInstance(
 	// The shell will then call QueryInterface with IID_IShellExtInit
 	// -- this is how shell extensions are initialized.
 
-	LPCVFDSHEXT pVfdShExt = new CVfdShExt;
-
-	if (!pVfdShExt) {
+	LPCVFDSHEXT pVfdShExt;
+	try {
+		pVfdShExt = new CVfdShExt;
+	}
+	catch(std::bad_alloc) {
 		return E_OUTOFMEMORY;
 	}
 

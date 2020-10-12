@@ -258,10 +258,10 @@ void WINAPI VfdImageTip(
 	ULONG			nDevice)
 {
 	HANDLE			hDevice;
-	PSTR			info_str	= NULL;
-	PSTR			type_str	= NULL;
-	PSTR			prot_str	= NULL;
-	PCSTR			media_str	= NULL;
+	PSTR			info_str;
+	PSTR			type_str;
+	PSTR			prot_str;
+	PCSTR			media_str;
 	CHAR			path[MAX_PATH];
 	CHAR			desc[MAX_PATH];
 	VFD_DISKTYPE	disk_type;
@@ -329,7 +329,7 @@ void WINAPI VfdImageTip(
 		MSG_IMAGE_INFOTIP,
 		path,
 		desc,
-		type_str ? type_str : "",
+		type_str,
 		media_str ? media_str : "",
 		prot_str ? prot_str : "");
 

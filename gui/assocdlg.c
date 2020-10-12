@@ -445,6 +445,7 @@ void UpdateList(HWND hDlg)
 	//
 
 	index = 0;
+	size_t ncAppBase = strlen(pAppBase);
 
 	for (;;) {
 		DWORD size = sizeof(ext);
@@ -467,7 +468,7 @@ void UpdateList(HWND hDlg)
 		ext[size] = '\0';
 
 		if ((ret = GetAssociatedProgram(ext, prog, sizeof(prog))) == ERROR_SUCCESS) {
-			if (_strnicmp(prog, pAppBase, strlen(pAppBase)) == 0) {
+			if (_strnicmp(prog, pAppBase, ncAppBase) == 0) {
 				AddItem(hList, ext, prog, sizeof(prog));
 			}
 		}
@@ -708,7 +709,7 @@ void ToggleItem(HWND hList, int iItem)
 			nCheckedItems++;
 			item.iImage = 1;
 		}
-		else if (item.iImage == 1) {
+		else { // item.iImage == 1
 			nCheckedItems--;
 			item.iImage = 0;
 		}

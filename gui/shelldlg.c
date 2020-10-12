@@ -486,7 +486,7 @@ void ToggleTreeItem(HWND hTree, HTREEITEM hItem)
 		if (item.iImage == 0) {
 			item.iSelectedImage = item.iImage = 1;
 		}
-		else if (item.iImage == 1) {
+		else { // item.iImage == 1
 			item.iSelectedImage = item.iImage = 0;
 		}
 
@@ -525,15 +525,13 @@ void AdjustButtons(HWND hDlg, HWND hTree)
 					TVPARAMS *param = (TVPARAMS *)item.lParam;
 
 					if (param->item_type == ITEM_SHELLEXT) {
-						if ((param->link_type && !item.iImage) ||
-							(!param->link_type && item.iImage)) {
+						if (!!param->link_type != !!item.iImage) {
 							changed = TRUE;
 							goto exit_func;
 						}
 					}
 					else if (param->item_type == ITEM_SHORTCUT) {
-						if ((param->path && !item.iImage) ||
-							(!param->path && item.iImage)) {
+						if (!!param->path != !!item.iImage) {
 							changed = TRUE;
 							goto exit_func;
 						}
@@ -587,15 +585,17 @@ LPTSTR SearchVfdLink(
 	BOOL			match = FALSE;
 	DWORD			err;
 	char			link_arg[10];
+	size_t			nc_link_arg;
 	LPTSTR			buf;
 
 	//	format a link argument to look for
 
 	if (type >= 0) {	//	look for a VFD drive shortcut
-		sprintf_s(link_arg, sizeof(link_arg), VFD_OPEN_SWITCH " %d:", type);
+		nc_link_arg = sprintf_s(link_arg, sizeof(link_arg), VFD_OPEN_SWITCH " %d:", type);
 	}
 	else {
 		link_arg[0] = '\0';
+		nc_link_arg = 0;
 	}
 
 	//	get the path indicated by the folder identifier
@@ -674,7 +674,7 @@ LPTSTR SearchVfdLink(
 
 		//	does the link argument match?
 
-		if (type >= 0 && !_strnicmp(args, link_arg, strlen(link_arg))) {
+		if (type >= 0 && !_strnicmp(args, link_arg, nc_link_arg)) {
 			match = TRUE;
 			break;
 		}

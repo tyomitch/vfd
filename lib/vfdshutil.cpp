@@ -12,6 +12,7 @@
 #include <windows.h>
 #include <objbase.h>
 #include <stdio.h>
+#include <new>
 
 #include "vfdtypes.h"
 #include "vfdapi.h"
@@ -54,9 +55,11 @@ STDAPI DllGetClassObject(
 	*ppvOut = NULL;
 
 	if (IsEqualIID(rclsid, CLSID_VfdShellExt)) {
-		CVfdFactory *pFactory = new CVfdFactory;
-
-		if (!pFactory) {
+		CVfdFactory* pFactory;
+		try {
+			pFactory = new CVfdFactory;
+		}
+		catch (std::bad_alloc) {
 			return E_OUTOFMEMORY;
 		}
 
