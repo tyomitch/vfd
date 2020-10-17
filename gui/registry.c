@@ -48,6 +48,7 @@ DWORD GetAssociatedProgram(LPCTSTR ext, LPTSTR prog, size_t prog_size)
 	//	Read [HKEY_CLASSES_ROOT\<file type>\shell] -- default verb
 
 	strcat_s(subkey, sizeof(subkey), "\\shell");
+	size_t nc_subkey = strlen(subkey);
 
 	ret = ReadRegStrValue(subkey, NULL, buf);
 
@@ -57,7 +58,7 @@ DWORD GetAssociatedProgram(LPCTSTR ext, LPTSTR prog, size_t prog_size)
 
 	//	Read [HKEY_CLASSES_ROOT\<file type>\shell\<verb>\command] -- command line
 
-	sprintf_s(subkey + strlen(subkey), sizeof(subkey) - strlen(subkey), "\\%s\\command", buf[0] ? buf : "open");
+	sprintf_s(subkey + nc_subkey, sizeof(subkey) - nc_subkey, "\\%s\\command", buf[0] ? buf : "open");
 
 	if ((ret = ReadRegStrValue(subkey, NULL, buf)) != ERROR_SUCCESS) {
 		return ret == ERROR_FILE_NOT_FOUND ? ERROR_SUCCESS : ret;
